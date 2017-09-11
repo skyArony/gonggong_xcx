@@ -1,0 +1,64 @@
+<!--cost.wxml-->
+<view class="allpage">
+  <view class="top">
+    <view class="top-card">
+      <view class="top-line">
+        <view class="tline-left">校园卡</view>
+        <view class="tline-right">正常可用</view>
+      </view>
+      <view class="mid-line">
+        <view class="mline-money">53.88</view>
+        <view class="mline-quancun">待圈存 0.00</view>
+      </view>
+      <view class="bottom-line">6217 **** **** ***8 024</view>
+    </view>
+  </view>
+  <view class="month-record">
+    <view class="mrecord-header">
+      <view class="mrecord-header-left">本月</view>
+      <view class="mrecord-header-right">充值 0.00 | 支出 24.85</view>
+    </view>
+    <view class="mrecord-content">
+      <view class="mrecord-content-item">
+        <view class="mcitem-left">
+          <view class="event">琴湖17.18栋热水</view>
+          <view class="time">2017/03/05 17:39:05</view>
+        </view>
+        <view class="mcitem-right">-0.06</view>
+      </view>
+    </view>
+  </view>
+  <view class="month-record">
+    <view class="mrecord-header">
+      <view class="mrecord-header-left">2017年9月</view>
+      <view class="mrecord-header-right">充值 0.00 | 支出 24.85</view>
+    </view>
+    <view class="mrecord-content">
+      <view class="mrecord-content-item">
+        <view class="mcitem-left">
+          <view class="event">琴湖17.18栋热水</view>
+          <view class="time">2017/03/05 17:39:05</view>
+        </view>
+        <view class="mcitem-right">-0.06</view>
+      </view>
+    </view>
+    <view class="mrecord-content">
+      <view class="mrecord-content-item">
+        <view class="mcitem-left">
+          <view class="event">琴湖17.18栋热水</view>
+          <view class="time">2017/03/05 17:39:05</view>
+        </view>
+        <view class="mcitem-right">-0.06</view>
+      </view>
+    </view>
+    <view class="mrecord-content">
+      <view class="mrecord-content-item">
+        <view class="mcitem-left">
+          <view class="event">琴湖17.18栋热水</view>
+          <view class="time">2017/03/05 17:39:05</view>
+        </view>
+        <view class="mcitem-right">-0.06</view>
+      </view>
+    </view>
+  </view>  
+</view>

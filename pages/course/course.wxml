@@ -1,0 +1,110 @@
+<!--course.wxml-->
+
+<!--  顶部工具栏  -->
+<view class="header">
+<!--holder为占位块，为了实现flex布局的效果  -->
+  <view class="holder"></view>
+  <view class="week">
+    <picker bindchange="bindPickerChange" value="{{index}}" range="{{weekList}}">
+      <view class="picker big">
+        {{weekList[index]}}
+      </view>
+    </picker>
+    <view class="small">非本周</view>
+  </view>
+  <view class="tool">
+    <image class="tool-icon" src="../../images/change.png" mode="aspectFit"></image>
+  </view>
+</view>
+
+<!--  课表  -->
+<view class="content">
+  <view class="row-header">
+    <view class="month">
+      <view class="monthnum ccenter">3</view>
+      <view class="monthfont ccenter">月</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">13</view>
+      <view class="weekname ccenter">周一</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">14</view>
+      <view class="weekname ccenter">周二</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">15</view>
+      <view class="weekname ccenter">周三</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">16</view>
+      <view class="weekname ccenter">周四</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">17</view>
+      <view class="weekname ccenter">周五</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">18</view>
+      <view class="weekname ccenter">周六</view>
+    </view>
+    <view class="weektitle">
+      <view class="date ccenter">19</view>
+      <view class="weekname ccenter">周日</view>
+    </view>
+  </view>
+  <view class="row-content">
+    <view class="num">
+      <view class="num-light ccenter">1</view>
+      <view class="num-dark ccenter">2</view>
+      <view class="num-light ccenter">3</view>
+      <view class="num-dark ccenter">4</view>
+      <view class="num-light ccenter">5</view>
+      <view class="num-dark ccenter">6</view>
+      <view class="num-light ccenter">7</view>
+      <view class="num-dark ccenter">8</view>
+      <view class="num-light ccenter">9</view>
+      <view class="num-dark ccenter">10</view>
+      <view class="num-light ccenter">11</view>
+    </view>
+    <view class="course">
+      <view class="grid">
+        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
+      </view>
+      <view class="grid">
+        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
+      </view>
+      <view class="grid">
+        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
+      </view>
+      <view class="grid">
+        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
+      </view>
+      <view class="grid">
+        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
+      </view>
+    </view>
+    <view class="course">
+      <view class="grid">
+        <view class="grid-content empty"></view>
+      </view>
+      <view class="grid">
+        <view class="grid-content lightred">概率论与数理统计1@逸夫楼-410</view>
+      </view>
+      <!--9.1%为一个格子的高度  -->
+      <view class="grid" style="height:36.4%;">
+        <view class="grid-content lightred">概率论与数理统计1@逸夫楼-410</view>
+      </view>
+    </view>
+    <view class="course"></view>
+    <view class="course"></view>
+    <view class="course"></view>
+    <view class="course"></view>
+    <view class="course"></view>
+  </view>
+  <!--  底部工具栏  -->
+  <view class="foot">
+    <image src="../../images/pull-down.png" mode="aspectFit"></image>
+  </view>
+</view>
+

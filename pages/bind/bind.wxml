@@ -1,0 +1,13 @@
+<!--bind.wxml-->
+<view class="top"></view>
+<image src="../../images/logo.png" mode="aspectFit" id="logo"></image>
+<view class="down">
+  <form bindsubmit="bindInfo">
+    <view class="input">
+      <input name="library" placeholder="图书馆密码（默认学号后6位数字）"  password="true" />
+      <view class="line"></view>
+      <input name="phone" placeholder="手机号"/>
+    </view>
+    <button formType="submit">绑定</button>
+  </form>
+</view>

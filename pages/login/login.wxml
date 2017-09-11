@@ -1,0 +1,16 @@
+<!--login.wxml-->
+<view class="top"></view>
+<image src="../../images/logo.png" mode="aspectFit" id="logo"></image>
+<view class="down">
+  <form bindsubmit="formLogin">
+    <view class="input">
+      <input name="sid" placeholder="请输入学号" />
+      <view class="line"></view>
+      <input name="password" placeholder="请输入信息门户密码" password="true" />
+    </view>
+    <button formType="submit">登录</button>
+  </form>
+  <view class="tip" bindtap="setClipboard">
+    <text>信息门户初始密码为身份证后6位,如含字母则大写\n忘记密码可进行找回操作</text>
+  </view>
+</view>

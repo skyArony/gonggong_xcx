@@ -1,0 +1,69 @@
+<!--grades.wxml-->
+<view class="allpage">
+  <view class="top">
+    <view class="top-block">
+      <view class="tblock-value">{{avgGpa}}</view>
+      <view class="tblock-key">平均绩点</view>
+    </view>
+    <view class="top-block">
+      <view class="tblock-value">{{classRank}}</view>
+      <view class="tblock-key">班级排名</view>
+    </view>
+    <view class="top-block">
+      <view class="tblock-value">{{majorRank}}</view>
+      <view class="tblock-key">专业排名</view>
+    </view>
+    <view class="top-block">
+      <view class="tblock-value">{{avgGrade}}</view>
+      <view class="tblock-key">平均成绩</view>
+    </view>
+  </view>
+  <view wx:if="{{status == 0}}">
+    <view class="tip">
+      <text class="tip-up">拱拱正在努力的加载数据</text>
+      <text class="tip-down">请稍微等一下哦</text>
+    </view>
+  </view>
+  <view wx:elif="{{status == 1}}">
+    <view class="tip">
+      <text class="tip-up">拱拱猜你应该是大一的新生</text>
+      <text class="tip-down">还没有考试成绩哦</text>
+    </view>
+  </view>
+  <view wx:for="{{gradeInfo}}" wx:for-index="gradeInfoIndex">
+    <block wx:if="{{item.length > 0}}">
+      <view class="grade-block">
+        <view class="title">{{gradeInfoIndex}}</view>
+        <view class="line-in"></view>
+        <view class="grade-details">
+          <view class="grade-content">
+            <view class="grade-item">
+              <view class="gitem-left">课程</view>
+              <view class="gitem-right">
+                <view class="gitem-in-left">学分</view>
+                <view class="gitem-in-right">总评</view>
+              </view>
+            </view>
+            <view class="line-in2"></view>
+            <view wx:for="{{gradeInfo[gradeInfoIndex]}}" wx:for-item="gradeItem" wx:for-index="gradeIndex" class="grade-item">
+              <view class="gitem-left">{{gradeItem.course}}</view>
+              <view class="gitem-right">
+                <view class="gitem-in-left">{{gradeItem.credit}}</view>
+                <view class="gitem-in-right">{{gradeItem.comp_grade}}</view>
+              </view>
+            </view>
+          </view>
+          <view class="grade-sum">
+            <view class="gsum-left">平均成绩 {{item[item.length-1].average_grade}}</view>
+            <view class="gsum-center">平均绩点 {{item[item.length-1].gpa}}</view>
+            <view class="gsum-right">总学分 {{item[item.length-1].totalCredit}}</view>
+            <view class="gsum-left">班级排名 {{item[item.length-1].gpa_class_rank}}</view>
+            <view class="gsum-center">专业排名 {{item[item.length-1].gpa_major_rank}}</view>
+            <view class="gsum-right">必修学分 {{item[item.length-1].requiredCredit}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="line"></view>
+    </block>
+  </view>
+</view>

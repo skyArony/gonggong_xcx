@@ -1,0 +1,84 @@
+/* cost.wxss */
+page{
+    height:100%;
+    background-color:#ededed;
+}
+.allpage{
+    display: flex;
+    flex-direction: column;
+}
+
+.top{
+    padding: 20rpx;
+    background-color: #fff;
+    border-bottom: solid 1rpx #e6e6e6;
+}
+.top-card{
+    background-color: #65a5e5;
+    padding: 40rpx;
+    border-radius: 20rpx;
+    color: white;
+}
+.top-line{
+    font-size: 30rpx;
+    display: flex;
+    justify-content: space-between;
+}
+
+.mline-money{
+    font-size: 50rpx;
+    padding-top: 50rpx;
+    padding-bottom: 15rpx;
+}
+.mline-quancun{
+    font-size: 30rpx;
+}
+
+.bottom-line{
+    letter-spacing: 5rpx;
+}
+
+.month-record{
+  display: flex;
+  flex-direction: column;
+}
+
+.mrecord-header{
+  display: flex;
+  justify-content: space-between;
+  background-color: #ededed;
+  padding: 30rpx;
+  font-size: 28rpx;
+  border-bottom: solid 1rpx #e6e6e6;
+  color: #525252;
+}
+
+.mrecord-content{
+  background-color: #fff;
+  padding: 30rpx;
+  border-bottom: solid 1rpx #e6e6e6;
+}
+
+.event{
+  font-size: 28rpx;
+  padding-bottom: 10rpx;
+  color: #525252;
+}
+
+.time{
+  font-size: 24rpx;
+  color: #757575;
+}
+
+.mcitem-right{
+  display: flex;
+  align-items: center;
+  font-weight: 650;
+}
+
+.mrecord-content-item{
+  display: flex;
+  justify-content: space-between;
+  font-size: 40rpx;
+  color: #525252;
+}

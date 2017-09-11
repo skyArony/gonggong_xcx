@@ -1,0 +1,56 @@
+/* about.wxss */
+page {
+  background-color: #ededed;
+}
+
+.outer {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  width: 180rpx;
+  height: 180rpx;
+  margin-top: 100rpx;
+}
+
+.version{
+  text-align: center;
+  margin-top: 60rpx;
+  font-size: 27rpx;
+  color: #525252;
+}
+
+.logo_outer{
+  display: flex;
+  justify-content: center;
+}
+
+.developer{
+  text-align: center;
+  margin-top: 60rpx;
+  color: #757575;
+  font-size: 25rpx;
+  line-height: 44rpx;
+}
+
+button{
+  width: 80%;
+  margin-top: 80rpx;
+  background-color: #63ba63;
+  color: #fff;
+}
+
+.link{
+   margin-top: 280rpx;
+  text-align: center;
+  color: #3e8fde;
+  font-size: 25rpx;
+}
+
+.copyright {
+   margin-top: 40rpx;
+  text-align: center;
+  color: #757575;
+  font-size: 22rpx;
+}

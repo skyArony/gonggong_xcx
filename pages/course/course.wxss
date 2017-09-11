@@ -1,0 +1,157 @@
+/* course.wxss */
+page{
+  height: 100%;
+}
+
+.header{
+  height: 6%;
+  background-color: #3e8fde;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  justify-content: space-between;
+}
+
+.week{
+  display: flex;
+  align-items: baseline;
+}
+
+.big{
+  font-size: 35rpx;
+  padding-right: 10rpx;
+}
+
+.small{
+  font-size: 25rpx;
+}
+
+.tool-icon{
+  width: 50rpx;
+  height: 50rpx;
+  padding-right: 35rpx;
+}
+
+.holder{
+  width: 50rpx;
+  height: 50rpx;
+  padding-left: 35rpx;
+}
+
+.content{
+  height: 94%;
+}
+
+.row-header{
+  height: 7%;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-wrap: nowrap;
+  color: #757575;
+}
+
+.row-content{
+  height: 90%;
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: #fafafa;
+}
+
+.month{
+  width: 9%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5rpx;
+}
+
+.monthnum{
+  font-size: 30rpx;
+  font-weight: 650;
+}
+
+.monthfont{
+  font-size: 20rpx;
+}
+
+.weekname{
+  font-size: 23rpx;
+}
+
+.date{
+  font-size: 23rpx;
+  font-weight: 650;  
+}
+
+.weektitle{
+  width: 13%;
+  height: 100%;
+  padding: 10rpx;
+}
+
+.num{
+  width: 9%;
+  height: 100%;
+}
+
+.num-light{
+  height: 9.09%;
+  color: #757575;
+  font-size: 30rpx;
+}
+
+.num-dark{
+  height: 9.1%;
+  background-color: #e3e3e3;
+  color: #757575;
+  font-size: 30rpx;
+}
+
+.course{
+  width: 13%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.foot{
+  height: 3%;
+  background-color: white;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0px -2rpx 5px #d6d6d6;
+}
+
+.foot image{
+  height: 100%;
+}
+
+.grid{
+  box-sizing: border-box;
+  height: 18.2%;
+  padding: 0.5px;
+}
+
+.grid-content{
+  box-sizing: border-box;
+  font-size: 23rpx;
+  color: white;
+  text-align: center;
+  border-radius: 6rpx;
+  height: 100%;
+  padding: 6rpx;
+}
+
+.empty{
+
+}
+
+.lightblue{
+  background-color: #83d3d4;
+}
+
+.lightred{
+  background-color: #eb9fa1;
+}
+

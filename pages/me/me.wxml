@@ -1,0 +1,36 @@
+<!--me.wxml-->
+<view class="allpage">
+  <view class="top">
+    <image class="back" src="../../images/back.png" mode="aspectFill"></image>
+    <view class="mygg">　　　　</view>
+    <image class="headimg" src="../../images/img.jpg" mode="aspectFill"></image>
+    <view class="username">翼宝321</view>
+    <view class="userid">2015551509</view>
+  </view>
+  <view class="mid">
+    <view class="outer">
+      <view class="title">设置</view>
+      <view class="line-in"></view>
+      <view class="content">
+        <view class="set-item0">图书到期短信提醒
+          <switch checked color="#5fb0e8" />
+        </view>
+        <view class="set-item">其他设置</view>
+      </view>
+    </view>
+  </view>
+  <view class="line"></view>
+  <view class="bottom">
+    <view class="outer">
+      <view class="title">其他</view>
+      <view class="line-in"></view>
+      <view class="content">
+        <view class="set-item">创建快捷方式</view>
+        <navigator class="set-item" url="/pages/about/about">关于拱拱</navigator>
+        <view class="set-item">重新绑定三翼通行证</view>
+        <view class="set-item">我的微信帐号</view>
+      </view>
+    </view>
+  </view>
+  <view class="line"></view>
+</view>

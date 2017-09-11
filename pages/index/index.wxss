@@ -1,0 +1,235 @@
+/* index.wxss */
+page{
+    height: 100%;
+    background-color: #ededed;
+}
+.allpage{
+    height: 100%;
+    background-color: #ededed;
+}
+.line{
+    height: 4rpx;
+    width: 100%;
+    background-color: #e9e9e9;
+    align-self:flex-end;
+}
+.line-in{
+    height: 1px;
+    width: 100%;
+    background-color: #e2e2e2;
+    align-self:flex-end;
+}
+
+.top{
+    height: auto;
+    background-color: #3e8fde;
+    display: flex;
+    padding: 0rpx 0 30rpx 0;
+}
+.headimg{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+.headimg-outer{
+    width: 44px;
+    height: 44px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.headimg-content{
+    width: 40px;
+    height: 40px;
+    background-color: green;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.headimg-img{
+    width: 100%;
+    height: 100%;
+}
+.infos{
+    flex: 3;
+    display: flex;
+    justify-content: flex-start;
+}
+.info{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.info-up{
+    font-size: 40rpx;
+    color: white;
+    padding-bottom: 10rpx;
+}
+.info-down{
+    font-size: 20rpx;
+    color: white;
+}
+
+.buttons{
+    height: 26%;
+    background-color: #fff;
+    margin-bottom: 10rpx;
+    display: flex;
+    flex-direction: column;
+}
+.buttons-content{
+    flex: 1;
+    display: flex;
+}
+.button{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.button-img{
+    height: 70rpx;
+    width: 70rpx;
+}
+.button-font{
+    padding-top: 10rpx;
+    font-size: 22rpx;
+    color: #525252;
+}
+
+.course{
+    height: 24%;
+    background-color: #fff;
+    margin-bottom: 10rpx;
+    display: flex;
+    flex-direction: column;
+}
+.course-in{
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 16rpx 20rpx 0 20rpx;
+}
+.todaycourse{
+    height: auto;
+    justify-content: space-between; 
+    align-items: center;   
+    display: flex;
+    padding: 0rpx 20rpx 16rpx 20rpx;    
+}
+.todaycourse-font{
+    font-size: 27rpx;
+    color: #525252;
+}
+.todaycourse-img{
+    height: 35rpx;
+    width: 35rpx;
+}
+.scroll-infos{
+    width: 100%;
+    white-space: nowrap;
+    height: auto;
+    overflow: hidden;
+    /*flex-wrap: nowrap;*/
+}
+.scroll-block{
+    display: inline-block;
+    flex-direction: column;
+    padding: 10rpx;
+    margin: 15rpx 15rpx 0 10rpx;
+    overflow: hidden;
+    width: 350rpx;
+}
+.course-name{
+    font-size: 38rpx;
+    color: #525252;
+    padding-bottom: 20rpx;
+}
+.course-info{
+    display: flex;
+    align-items: center;
+    color: #525252;
+    padding-bottom: 20rpx;
+}
+.course-teacher{
+    display: flex;
+    align-items: center;
+    padding-right: 20rpx;
+}
+.course-position{
+    display: flex;
+    align-items: center;
+}
+.course-img{
+    width: 27rpx;
+    height: 27rpx;
+}
+.course-font{
+    font-size: 22rpx;
+}
+.course-position{
+
+}
+.course-time{
+    color: #525252;
+    font-size: 28rpx;
+}
+
+.account{
+    height: auto;
+    background-color: #fff;
+    margin-bottom: 10rpx;
+    display: flex;
+    flex-direction:column;
+}
+.account-in{
+    height:100%;
+    background-color:#fff;
+    display:flex;
+    flex-direction:column;
+    padding:20rpx 20rpx 0 20rpx;
+}
+.myaccount{
+    height:auto;
+    justify-content:space-between;
+    align-items:center;
+    display:flex;
+    padding:0rpx 20rpx 20rpx 20rpx;
+}
+.account-font{
+    font-size:27rpx;
+    color:#525252;
+}
+
+.allaccount{
+    padding: 0 20rpx 20rpx 20rpx;
+}
+.account-info{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20rpx;
+}
+.info-font{
+    font-size: 28rpx;
+    color: #757575;
+}
+.timer{
+    height: auto;
+    background-color: #fff;
+    margin-bottom: 10rpx;
+    display: flex;
+    flex-direction:column;
+}
+.timer-in{
+    padding:0 20rpx 10rpx 20rpx;
+}
+.timer-item{
+    display:flex;
+    justify-content:space-between;
+    padding-top:20rpx;
+}

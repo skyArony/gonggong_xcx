@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/me/me",
+    "pages/grade/grade",
+    "pages/cost/cost",
+    "pages/library/library",
+    "pages/course/course",
+    "pages/login/login",
+    "pages/bind/bind",
+    "pages/about/about"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#3e8fde",
+    "navigationBarTitleText": "拱拱",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#3e8fde",
+    "enablePullDownRefresh": "ture"
+  },
+  "tabBar": {
+    "color": "#909090",
+    "selectedColor": "#579de1",
+    "backgroundColor": "#fafafa",
+    "borderStyle": "white",
+    "position": "bottom",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/campus.png",
+        "selectedIconPath": "images/campus-s.png",
+        "text": "校园"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "iconPath": "images/me.png",
+        "selectedIconPath": "images/me-s.png",
+        "text": "我"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true
+}

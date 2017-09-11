@@ -1,0 +1,109 @@
+/* grade.wxss */
+page {
+  height: 100%;
+  background-color: #ededed;
+}
+.allpage {
+  display: flex;
+  flex-direction: column;
+}
+.line{
+    height: 4rpx;
+    width: 100%;
+    background-color: #e9e9e9;
+    align-self:flex-end;
+}
+.line-in{
+    height: 1px;
+    width: 100%;
+    background-color: #e2e2e2;
+    align-self:flex-end;
+}
+
+.top {
+  display: flex;
+  background-color: #3e8fde; 
+}
+
+.top-block {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20rpx 35rpx 40rpx 35rpx;
+}
+.tblock-value{
+     font-size: 40rpx;
+     color: white;
+}
+.tblock-key{
+    font-size: 20rpx;
+    color: white;
+}
+
+.grade-block{
+    padding: 20rpx 20rpx 0 20rpx;
+    margin-bottom: 20rpx;
+    background-color: white;
+}
+.title{
+    padding: 0 20rpx 20rpx 20rpx;
+    color: #525252;
+    font-size: 28rpx;
+}
+.grade-details{
+    display: flex;
+    flex-direction: column;
+    padding: 0rpx 20rpx 25rpx;
+    color: #757575;
+    font-size: 25rpx;
+}
+.grade-content{
+    padding-bottom: 25rpx;
+}
+.grade-sum{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.grade-item{
+    display: flex;
+    padding: 10rpx 0 0 0;
+}
+.gitem-left{
+    width: 70%;
+}
+.gitem-right{
+    width: 30%;
+    display: flex;
+    justify-content: space-between;
+}
+.line-in2{
+    height: 0.5px;
+    width: 100%;
+    background-color: #eaeaea;
+    align-self:flex-end;
+    margin-top: 10rpx;
+}
+.gitem-in-left{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
+.gitem-in-right{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
+.gsum-left,.gsum-center{
+    width: 35%;
+}
+.gsum-right{
+    width: 30%;
+}
+.tip{
+  margin-top: 50rpx;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: #a8a8a8;
+}
