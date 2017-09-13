@@ -53,7 +53,11 @@ button{
   color: #fff;
 }
 
-
+.radio {
+  color: #757575;
+  font-size: 30rpx;
+  padding-top: 35rpx;
+}
 
 .tip{
   margin: 70rpx 40rpx;

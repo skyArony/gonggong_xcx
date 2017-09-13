@@ -14,10 +14,14 @@
   <swiper-item>
     <view class="my">
       <view class="header">
-        <view class="left"><text style="padding-right:15rpx;">共借阅</text><text class="big">4</text><text style="padding-left:15rpx;">本</text></view>
+        <view class="left">
+          <text style="padding-right:15rpx;">共借阅</text>
+          <text class="big">{{bookNum}}</text>
+          <text style="padding-left:15rpx;">本</text>
+        </view>
         <view class="right">
-          <view class="top">欠费:￥2.10</view>
-          <view class="down">有效期:2019-06-15</view>
+          <view class="top">欠费:￥{{debet}}</view>
+          <view class="down">有效期:{{validityTime}}</view>
         </view>
       </view>
       <view class="content">
@@ -56,27 +60,18 @@
           </view>
         </form>
       </view>
-      <!-- <view class="result" wx:if="{{searchRes}}">
+      <view class="result" wx:if="{{searchRes}}">
         <view wx:for="{{searchRes}}">
-          <view class="res-item" data-url="{{item.url}} bindtap="getBookDetail">
-            <view class="item-title">{{item.name}}</view>
-            <view class="item-info">
-              <view class="author" wx:if="{{item.author}}">作者：{{item.author}}</view>
-              <view class="author" wx:else>作者：-</view>
-              <view class="publisher">{{item.publisher}}</view>
+          <view class="res-item" data-url="{{item.url}}" bindtap=" getBookDetail ">
+            <view class="item-title ">{{item.name}}</view>
+            <view class="item-info ">
+              <view class="author " wx:if="{{item.author}} ">作者：{{item.author}}</view>
+              <view class="author " wx:else>作者：-</view>
+              <view class="publisher ">{{item.publisher}}</view>
             </view>
           </view>
         </view>
-      </view> -->
-      <view class="result">
-        <view class="res-item">
-          <view class="item-title">从你的全世界路过</view>
-          <view class="item-info">
-            <view class="author">作者：-</view>
-            <view class="publisher">问问出版社</view>
-          </view>
-        </view>
-      </view>
+      </view>  
     </scroll-view>
   </swiper-item>
 </swiper>

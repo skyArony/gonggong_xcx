@@ -6,8 +6,17 @@
     <view class="input">
       <input name="sid" placeholder="请输入学号" />
       <view class="line"></view>
-      <input name="password" placeholder="请输入信息门户密码" password="true" />
+      <input wx:if="{{loginType == 1}}" name="password" placeholder="请输入信息门户密码" password="true"></input>
+      <input wx:elif="{{loginType == 2}}" name="password" placeholder="请输入教务系统密码" password="true"></input>
     </view>
+    <radio-group bindchange="radioChange" class="radio" name="loginType">
+      <label>
+        <radio value="1" />信息门户
+      </label>
+      <label>
+        <radio value="2" checked='true' />通行证/教务系统
+      </label>
+    </radio-group>
     <button formType="submit">登录</button>
   </form>
   <view class="tip" bindtap="setClipboard">

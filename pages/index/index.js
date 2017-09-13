@@ -24,6 +24,7 @@ Page({
   /**
    * 函数
    */
+  
   /* 敬请期待 */
   waiting: function () {
     wx.showModal({
@@ -62,6 +63,7 @@ Page({
       })
     })
   },
+
   /* 获取openId */
   getOpenId: function (cb) {
     var that = this
@@ -98,6 +100,7 @@ Page({
       })
     }
   },
+
   /* 检查登录状态 */
   checkLogin: function () {
     var that = this
@@ -158,21 +161,52 @@ Page({
       })
     }
   },
+
   /* 检查数据的有效性 */
   checkIndexData: function () {
     this.data.indexData = wx.getStorageSync('indexData')
     // 如果距离上次获取数据的时间超过了两个小时则重新获取数据
     if (this.data.indexData && (new Date().getTime() - this.data.indexData.refreshTime) < 7200000) {
       // 从缓存中取得数据放到全局变量，准备进行数据设置
-      this.setUserInfo()
+      this.setIndexData()
     } else {
-      this.getIndexData()
-      this.setUserInfo()
+      this.getIndexData() // 存在数据未获取完就进行了下一步的数据设置的问题
     }
   },
 
+  /* 进行本页所需的数据获取 */
+  getIndexData: function () {
+    var that = this
+    that.data.indexData = {}
+    // 获取拱拱个人信息并设置到视图层
+    common.getUserInfo(function (userInfo) {
+      that.data.indexData.userInfo = userInfo
+      that.endCheck()
+    })
+    // 获取课程信息并设置到视图层
+    common.getCourse(function (courseInfo) {
+      that.data.indexData.courseInfo = courseInfo
+      that.endCheck()
+    })
+    // 获取图书馆信息并设置到视图层
+    common.getLibrary(function (libraryInfo) {
+      that.data.indexData.libraryInfo = libraryInfo
+      that.endCheck()
+    })
+    // 获取一卡通信息并设置到视图层
+    common.getEcard(function (eCardInfo) {
+      that.data.indexData.eCardInfo = eCardInfo
+      that.endCheck()
+    })
+    // 获取校园余额并设置到视图层
+    common.getNetInfo(function (netInfo) {
+      that.data.indexData.netInfo = netInfo
+      that.endCheck()
+    })
+  },
+
   /* 设置数据到视图层 */
-  setUserInfo: function () {
+  setIndexData: function () {
     // 设置头像等信息
     this.setData({
       userImg: this.data.indexData.userInfo['img']
@@ -203,36 +237,6 @@ Page({
     })
   },
 
-  /* 进行本页所需的数据获取 */
-  getIndexData: function () {
-    var that = this
-    // 获取拱拱个人信息并设置到视图层
-    common.getUserInfo(function (userInfo) {
-      that.data.indexData.userInfo = userInfo
-      that.endCheck()
-    })
-    // 获取课程信息并设置到视图层
-    common.getCourse(function (courseInfo) {
-      that.data.indexData.courseInfo = courseInfo
-      that.endCheck()
-    })
-    // 获取图书馆信息并设置到视图层
-    common.getLibrary(function (libraryInfo) {
-      that.data.indexData.libraryInfo = libraryInfo
-      that.endCheck()
-    })
-    // 获取一卡通信息并设置到视图层
-    common.getEcard(function (eCardInfo) {
-      that.data.indexData.eCardInfo = eCardInfo
-      that.endCheck()
-    })
-    // 获取校园余额并设置到视图层
-    common.getNetInfo(function (netInfo) {
-      that.data.indexData.netInfo = netInfo
-      that.endCheck()
-    })
-  },
-
   /* 数据加载检查 */
   endCheck: function () {
     // 本页面加载项：userinfo,timer,course,library*2,campus_net,ecard
@@ -243,6 +247,7 @@ Page({
       this.data.indexData.refreshTime = new Date().getTime()
       wx.setStorageSync('indexData', this.data.indexData)
       app.globalData.isEnd = 0
+      this.setIndexData()
     }
   },
 

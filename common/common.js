@@ -8,66 +8,90 @@ var app = getApp()
 
 /* 获取头像、昵称等基础信息 */
 function getUserInfo(cb) {
-  wx.request({
-    url: app.globalData.LOGIN,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        var userInfo = res.data.data
-        // 将官方timer和私人timer进行合并然后再将数据并入用户信息中
-        getTimer(function (officalTimer) {
-          var userTimer = JSON.parse(userInfo['timer']) // 私人计时
-          var availableTimer = new Array() // 可用（未过期的官方计时和所有的私人计时）计时容器
-          // 用户timer过期的还是要放入
-          for (var x in userTimer) {
-            availableTimer.push(userTimer[x])
-          }
-          for (var y in officalTimer) {
-            if (new Date(officalTimer[y]['start_date'] + " " + officalTimer[y]['start_time']) > new Date()) {
-              availableTimer.push(officalTimer[y])
-            }
-          }
-          availableTimer.sort(app.by('start_date', app.by('start_time')));
-          // 数据再处理\计算出天数
-          var tempTimer = new Array()
-          for (var z in availableTimer) {
-            var remainDay = (new Date(availableTimer[z]['start_date']) - new Date()) / 1000 / 60 / 60 / 24
-            remainDay = Math.ceil(remainDay)
-            var obj = {
-              name: availableTimer[z]['name'],
-              location: availableTimer[z]['location'],
-              start_date: availableTimer[z]['start_date'],
-              start_time: availableTimer[z]['start_time'],
-              remainDay: remainDay
-            }
-            tempTimer.push(obj)
-          }
-          availableTimer = tempTimer
-          app.globalData.availableTimer = tempTimer
-          // 将可以显示在index的timer取出
-          var showTimer = new Array()
-          for (var t in availableTimer) {
-            if (availableTimer[t]['remainDay'] > 0) {
-              showTimer.push(availableTimer[t])
-            }
-          }
-          userInfo['showTimer'] = showTimer
-          console.log("拱拱个人信息获取并处理成功")
-          console.log(userInfo)
-          app.globalData.userInfo = userInfo
-          typeof cb == "function" && cb(userInfo)
-        }) 
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.LOGIN,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        getUserInfoSuccess(res)
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
-    }
-  })
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.LOGIN_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        getUserInfoSuccess(res)
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+      }
+    })
+  }
+}
+
+/* 服务于getUserInfo的复用函数 */
+function getUserInfoSuccess(res) {
+  if (res.data.code == 0) {
+    console.log("登录成功!!!")
+    var userInfo = res.data.data
+    // 将官方timer和私人timer进行合并然后再将数据并入用户信息中
+    getTimer(function (officalTimer) {
+      var userTimer = JSON.parse(userInfo['timer']) // 私人计时
+      var availableTimer = new Array() // 可用（未过期的官方计时和所有的私人计时）计时容器
+      // 用户timer过期的还是要放入
+      for (var x in userTimer) {
+        availableTimer.push(userTimer[x])
+      }
+      for (var y in officalTimer) {
+        if (new Date(officalTimer[y]['start_date'] + " " + officalTimer[y]['start_time']) > new Date()) {
+          availableTimer.push(officalTimer[y])
+        }
+      }
+      availableTimer.sort(by('start_date', by('start_time')));
+      // 数据再处理\计算出天数
+      var tempTimer = new Array()
+      for (var z in availableTimer) {
+        var remainDay = (new Date(availableTimer[z]['start_date']) - new Date()) / 1000 / 60 / 60 / 24
+        remainDay = Math.ceil(remainDay)
+        var obj = {
+          name: availableTimer[z]['name'],
+          location: availableTimer[z]['location'],
+          start_date: availableTimer[z]['start_date'],
+          start_time: availableTimer[z]['start_time'],
+          remainDay: remainDay
+        }
+        tempTimer.push(obj)
+      }
+      availableTimer = tempTimer
+      app.globalData.availableTimer = tempTimer
+      // 将可以显示在index的timer取出
+      var showTimer = new Array()
+      for (var t in availableTimer) {
+        if (availableTimer[t]['remainDay'] > 0) {
+          showTimer.push(availableTimer[t])
+        }
+      }
+      userInfo['showTimer'] = showTimer
+      console.log("拱拱个人信息获取并处理成功")
+      console.log(userInfo)
+      app.globalData.userInfo = userInfo
+      typeof cb == "function" && cb(userInfo)
+    })
+  }
 }
 
 /* timer数据获取及处理，此函数服务getUserInfo，不向外暴露 */
@@ -304,6 +328,34 @@ function getRankInfo(cb) {
     }
   })
 }
+
+/* -----------------------------for:library:start------------------------ */
+/* 获取图书管页面借阅信息 */
+function getLibraryInfo(cb) {
+  wx.request({
+    url: app.globalData.LIBRARY_RENT_LIST,
+    data: {
+      role: app.globalData.app_AU,
+      hash: app.globalData.app_ID,
+      sid: app.globalData.sid,
+      password: app.globalData.portalpw,
+    },
+    success: function (res) {
+      if (res.data.code == 0) {
+        console.log("图书借阅信息获取成功")
+        console.log(res)
+        app.globalData.libraryInfo.rentList = res.data.data
+        app.globalData.libraryInfo.bookNum = res.data.data.length
+        typeof cb == "function" && cb(app.globalData.libraryInfo)
+      }
+    },
+    complete: function (res) {
+      app.globalData.isEnd++
+    }
+  })
+}
+
+/* -----------------------------for:library:end------------------------ */
 
 /* ----------------------------------------tools------------------------------------- */
 
