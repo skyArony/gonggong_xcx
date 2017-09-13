@@ -10,6 +10,8 @@ App({
     openId: null,
     sid: null,
     portalpw: null, // 登录密码——作为登录的状态的标志
+    librarypw: null, // 图书馆密码
+    ecardpw: null, // e卡通密码
     userInfo: null,
     libraryInfo: null, // 图书馆信息
     courseInfo: null, // 课程信息
@@ -57,5 +59,8 @@ App({
     EDU_EXAM_OLD: "https://api.sky31.com/edu-new/exam_arrange.php",
     EDU_RANK_OLD: "https://api.sky31.com/edu-new/rank.php",
     EDU_GRADE_DETAILS_OLD: "https://api.sky31.com/edu-new/grade_details.php",
+    PASSWORD_GET: "https://wechat.sky31.com/xcx/gonggong/getOtherPw.php", // 获取图书馆和一卡通密码
+    LIBRARY_READER_INFO_OLD: "https://api.sky31.com/library/reader_info.php",
+    LIBRARY_RENT_LIST_OLD: "https://api.sky31.com/library/rent_list.php", 
   }
 })

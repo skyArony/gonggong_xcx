@@ -126,6 +126,20 @@ Page({
     }
   },
 
+  /* 获取图书馆和一卡通密码 */
+  getOtherPw: function () {
+    wx.request({
+      url: app.globalData.PASSWORD_GET,
+      data: {
+        sid: app.globalData.sid,
+      },
+      success: function (res) {
+        app.globalData.librarypw = res.data.libraryPw
+        app.globalData.ecardpw   = res.data.ecardPw
+      }
+    })
+  },
+
   /* -------------------------------------------------------复用函数--------------------------------- */
   loginSuccess: function (res, e) {
     var that = this
@@ -138,6 +152,8 @@ Page({
       app.globalData.portalpw = e.detail.value.portalpw
       // 绑定学号
       that.bindSid()
+      // 获取图书馆密码和一卡通密码
+      that.getOtherPw()
       // 跳转到主页
       wx.reLaunch({
         url: '/pages/index/index'

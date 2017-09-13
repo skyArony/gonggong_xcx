@@ -117,119 +117,186 @@ function getTimer(cb) {
 
 /* 获取课程表-全部信息放到全局变量-今天课程信息返回 */
 function getCourse(cb) {
-  wx.request({
-    url: app.globalData.EDU_COURSE,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("课程信息获取成功")
-        console.log(res)
-        app.globalData.courseInfo = res.data.data
-        // 今日课程信息
-        var courseInfo = res.data.data
-        var todayCourseNum = 0
-        var todayCourseDetail = new Array()
-        var week = new Date().getDay() // 星期
-        for (var tCourse in courseInfo[week]) {
-          for (var course in courseInfo[week][tCourse]) {
-            var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
-            if (app.inArray(weekArray, app.globalData.currentWeek)) {
-              todayCourseNum++
-              todayCourseDetail.push(courseInfo[week][tCourse][course])
-            }
-          }
-        }
-        var todayCourse = {}
-        todayCourse.todayCourseNum = todayCourseNum
-        todayCourse.todayCourseDetail = todayCourseDetail
-        if (todayCourseNum == 0) todayCourse.status = 3
-        else todayCourse.status = 2
-        console.log("今日课程处理成功")
-        console.log(todayCourse)
-        typeof cb == "function" && cb(todayCourse)
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.EDU_COURSE,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        getCourseSuccess(res)
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.EDU_COURSE_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        getCourseSuccess(res)
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+      }
+    })
+  }
+}
+
+/* 服务于getCourse的复用函数 */
+function getCourseSuccess(res) {
+  if (res.data.code == 0) {
+    console.log("课程信息获取成功")
+    console.log(res)
+    app.globalData.courseInfo = res.data.data
+    // 今日课程信息
+    var courseInfo = res.data.data
+    var todayCourseNum = 0
+    var todayCourseDetail = new Array()
+    var week = new Date().getDay() // 星期
+    for (var tCourse in courseInfo[week]) {
+      for (var course in courseInfo[week][tCourse]) {
+        var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
+        if (inArray(weekArray, app.globalData.currentWeek)) {
+          todayCourseNum++
+          todayCourseDetail.push(courseInfo[week][tCourse][course])
+        }
+      }
     }
-  })
+    var todayCourse = {}
+    todayCourse.todayCourseNum = todayCourseNum
+    todayCourse.todayCourseDetail = todayCourseDetail
+    if (todayCourseNum == 0) todayCourse.status = 3
+    else todayCourse.status = 2
+    console.log("今日课程处理成功")
+    console.log(todayCourse)
+    typeof cb == "function" && cb(todayCourse)
+  }
 }
 
 /* 获取图书馆信息 */
 function getLibrary(cb) {
-  var libraryInfo = {}
-  wx.request({
-    url: app.globalData.LIBRARY_READER_INFO,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("读者信息获取成功")
-        console.log(res)
-        var libararyUser = res.data.data
-        // 欠费处理
-        var debt = libararyUser.debt
-        if (debt > 0) debt = -debt
-        else debt = "0.00"
-        libararyUser['debt'] = debt
-        getLibraryBook(function (libraryBook) {
-          libraryInfo.libararyUser = libararyUser
-          libraryInfo.libraryBook = libraryBook
-          app.globalData.libraryInfo = libraryInfo
-          console.log("图书信息处理成功")
-          console.log(libraryInfo)
-          typeof cb == "function" && cb(libraryInfo)
-        })
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.LIBRARY_READER_INFO,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        getLibrarySuccess(res);
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
-    }
-  })
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.LIBRARY_READER_INFO_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.librarypw
+      },
+      success: function (res) {
+        getLibrarySuccess(res);
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+      }
+    })
+  }
+}
+
+/* 服务于getLibrary的复用函数 */
+function getLibrarySuccess(res) {
+  var libraryInfo = {}
+  if (res.data.code == 0) {
+    var libararyUser = res.data.data
+    // 欠费处理
+    var debt = libararyUser.debt
+    if (debt > 0) debt = -debt
+    else debt = "0.00"
+    libararyUser['debt'] = debt
+    getLibraryBook(function (libraryBook) {
+      libraryInfo.libararyUser = libararyUser
+      libraryInfo.libraryBook = libraryBook
+      // 剩余还书天数
+      if (libraryBook == null) {
+        var bookTimer = "暂无"
+      } else {
+        var temp = 100
+        for (var x in libararyBook) {
+          if (libararyBook[x]['interval'] < temp) temp = libararyBook[x]['interval']
+        }
+        var bookTimer = temp + " 天"
+      }
+      libraryInfo.bookTimer = bookTimer
+      app.globalData.libraryInfo = libraryInfo
+      console.log("图书信息处理成功")
+      console.log(libraryInfo)
+      typeof cb == "function" && cb(libraryInfo)
+    })
+  }
 }
 
 /* 图书借阅信息获取及处理，服务于getLibrary，不向外暴露接口 */
 function getLibraryBook(cb) {
-  wx.request({
-    url: app.globalData.LIBRARY_RENT_LIST,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("借阅信息获取成功")
-        console.log(res)
-        var libraryBook = res.data.data
-        // 剩余还书天数
-        if (libraryBook == null) {
-          var bookTimer = "暂无"
-        } else {
-          var temp = 100
-          for (var x in libararyBook) {
-            if (libararyBook[x]['interval'] < temp) temp = libararyBook[x]['interval']
-          }
-          var bookTimer = temp + " 天"
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.LIBRARY_RENT_LIST,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          console.log("借阅信息获取成功")
+          console.log(res)
+          var libraryBook = res.data.data
+          typeof cb == "function" && cb(libraryBook)
         }
-        libraryBook['bookTimer'] = bookTimer
-        typeof cb == "function" && cb(libraryBook)
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
-    }
-  })
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.LIBRARY_RENT_LIST_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.librarypw
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          console.log("借阅信息获取成功")
+          console.log(res)
+          var libraryBook = res.data.data
+          typeof cb == "function" && cb(libraryBook)
+        }
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+      }
+    })
+  }
 }
 
 /* 获取一卡通信息 */
@@ -257,6 +324,7 @@ function getEcard(cb) {
 
 /* 获取校园网账户信息 */
 function getNetInfo(cb) {
+  console.log("校园网账户信息获取成功-----------------------------------")
   wx.request({
     url: app.globalData.CAMPUS_NET,
     data: {
@@ -272,6 +340,7 @@ function getNetInfo(cb) {
       }
     },
     complete: function (res) {
+      console.log("校园网账户信息获取成功!!!!!!!!!!!!!!!!!!!!!!")
       app.globalData.isEnd++
     }
   })
