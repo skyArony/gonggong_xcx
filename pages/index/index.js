@@ -212,30 +212,37 @@ Page({
     // 设置头像等信息
     console.log("以下是获取到的个人信息")
     console.log(this.data.indexData)
+    // if判断可以防止数据为空时的报错
+    if (this.data.indexData.userInfo) 
     this.setData({
       userImg: this.data.indexData.userInfo['img']
     })
     // 设置timer
+    if (this.data.indexData.showTimer) 
     this.setData({
       showTimer: this.data.indexData.showTimer
     })
     // 设置今日课程信息
+    if (this.data.indexData.courseInfo) 
     this.setData({
       status: this.data.indexData.courseInfo.status,
       todayCourse: this.data.indexData.courseInfo.todayCourseNum,
       todayCourseDetail: this.data.indexData.courseInfo.todayCourseDetail
     })
     // 设置图书馆信息
+    if (this.data.indexData.libraryInfo) 
     this.setData({
       bookTimer: this.data.indexData.libraryInfo.bookTimer,
       libraryDebt: this.data.indexData.libraryInfo.libararyUser['debt']
     })
     // 设置e卡通信息
+    if (this.data.indexData.eCardInfo) 
     this.setData({
       balance: this.data.indexData.eCardInfo.balance.blance,
       unclaimed: this.data.indexData.eCardInfo.unclaimed
     })
     // 设置校园卡余额
+    if (this.data.indexData.netInfo) 
     this.setData({
       net: this.data.indexData.netInfo.balance
     })
