@@ -201,6 +201,7 @@ Page({
     // 获取校园余额并设置到视图层
     common.getNetInfo(function (netInfo) {
       that.data.indexData.netInfo = netInfo
+      console.log("我要执行检查了，我在校园网获取处")
       that.endCheck()
     })
   },

@@ -17,11 +17,10 @@ function getUserInfo(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      success: function (res) {
-        getUserInfoSuccess(res)
-      },
       complete: function (res) {
         app.globalData.isEnd++
+        getUserInfoSuccess(res)
+        typeof cb == "function" && cb(app.globalData.userInfo)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -33,11 +32,10 @@ function getUserInfo(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      success: function (res) {
-        getUserInfoSuccess(res)
-      },
       complete: function (res) {
         app.globalData.isEnd++
+        getUserInfoSuccess(res)
+        typeof cb == "function" && cb(app.globalData.userInfo)
       }
     })
   }
@@ -86,10 +84,9 @@ function getUserInfoSuccess(res) {
         }
       }
       userInfo['showTimer'] = showTimer
+      app.globalData.userInfo = userInfo
       console.log("拱拱个人信息获取并处理成功")
       console.log(userInfo)
-      app.globalData.userInfo = userInfo
-      typeof cb == "function" && cb(userInfo)
     })
   }
 }
@@ -102,15 +99,13 @@ function getTimer(cb) {
       role: app.globalData.app_AU,
       hash: app.globalData.app_ID,
     },
-    success: function (res) {
+    complete: function (res) {
+      app.globalData.isEnd++
       if (res.data.code == 0) {
         console.log("官方到计时获取成功")
         console.log(res)
         typeof cb == "function" && cb(res.data.data)
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
     }
   })
 }
@@ -126,11 +121,10 @@ function getCourse(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      success: function (res) {
-        getCourseSuccess(res)
-      },
       complete: function (res) {
         app.globalData.isEnd++
+        getCourseSuccess(res)
+        typeof cb == "function" && cb(todayCourse)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -142,11 +136,9 @@ function getCourse(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      success: function (res) {
-        getCourseSuccess(res)
-      },
       complete: function (res) {
         app.globalData.isEnd++
+        typeof cb == "function" && cb(getCourseSuccess(res))
       }
     })
   }
@@ -179,7 +171,7 @@ function getCourseSuccess(res) {
     else todayCourse.status = 2
     console.log("今日课程处理成功")
     console.log(todayCourse)
-    typeof cb == "function" && cb(todayCourse)
+    return todayCourse
   }
 }
 
@@ -194,11 +186,10 @@ function getLibrary(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      success: function (res) {
-        getLibrarySuccess(res);
-      },
       complete: function (res) {
         app.globalData.isEnd++
+        getLibrarySuccess(res)
+        typeof cb == "function" && cb(app.globalData.libraryInfo)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -210,11 +201,10 @@ function getLibrary(cb) {
         sid: app.globalData.sid,
         password: app.globalData.librarypw
       },
-      success: function (res) {
-        getLibrarySuccess(res);
-      },
       complete: function (res) {
         app.globalData.isEnd++
+        getLibrarySuccess(res)
+        typeof cb == "function" && cb(app.globalData.libraryInfo)
       }
     })
   }
@@ -247,7 +237,6 @@ function getLibrarySuccess(res) {
       app.globalData.libraryInfo = libraryInfo
       console.log("图书信息处理成功")
       console.log(libraryInfo)
-      typeof cb == "function" && cb(libraryInfo)
     })
   }
 }
@@ -263,16 +252,14 @@ function getLibraryBook(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      success: function (res) {
+      complete: function (res) {
+        app.globalData.isEnd++
         if (res.data.code == 0) {
           console.log("借阅信息获取成功")
           console.log(res)
           var libraryBook = res.data.data
           typeof cb == "function" && cb(libraryBook)
         }
-      },
-      complete: function (res) {
-        app.globalData.isEnd++
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -284,16 +271,14 @@ function getLibraryBook(cb) {
         sid: app.globalData.sid,
         password: app.globalData.librarypw
       },
-      success: function (res) {
+      complete: function (res) {
+        app.globalData.isEnd++
         if (res.data.code == 0) {
           console.log("借阅信息获取成功")
           console.log(res)
           var libraryBook = res.data.data
           typeof cb == "function" && cb(libraryBook)
         }
-      },
-      complete: function (res) {
-        app.globalData.isEnd++
       }
     })
   }
@@ -301,30 +286,48 @@ function getLibraryBook(cb) {
 
 /* 获取一卡通信息 */
 function getEcard(cb) {
-  wx.request({
-    url: app.globalData.ECARD_BALANCE,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("一卡通信息获取成功")
-        console.log(res)
-        typeof cb == "function" && cb(res.data.data)
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.ECARD_BALANCE,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+        if (res.data.code == 0) {
+          console.log("一卡通信息获取成功")
+          console.log(res)
+          typeof cb == "function" && cb(res.data.data)
+        }
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
-    }
-  })
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.ECARD_BALANCE_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.ecardpw
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+        if (res.data.code == 0) {
+          console.log("一卡通信息获取成功")
+          console.log(res)
+          typeof cb == "function" && cb(res.data.data)
+        }
+      }
+    })
+  }
 }
 
 /* 获取校园网账户信息 */
 function getNetInfo(cb) {
-  console.log("校园网账户信息获取成功-----------------------------------")
+  console.log("校园网账户信息获取中-----------------------------------")
   wx.request({
     url: app.globalData.CAMPUS_NET,
     data: {
@@ -332,18 +335,27 @@ function getNetInfo(cb) {
       hash: app.globalData.app_ID,
       sid: app.globalData.sid,
     },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("校园网账户信息获取成功")
-        console.log(res)
-        typeof cb == "function" && cb(res.data.data)
-      }
+    fail: function (res) {
+      console.log("校园网账户信息 获取失败了！！！！！！！！！！！！！！！！！！！")
     },
     complete: function (res) {
-      console.log("校园网账户信息获取成功!!!!!!!!!!!!!!!!!!!!!!")
+      console.log("校园网账户信息获取结束!!!!!!!!!!!!!!!!!!!!!!")
+      console.log(res)
       app.globalData.isEnd++
+      checkError(res, "校园网账户信息")
     }
   })
+}
+
+/* 错误收集 */
+function checkError(res, requestName) {
+  if (res.errMsg != "request:fail timeout") {
+    typeof cb == "function" && cb(res.data.data)
+  } else {
+    var tempData = null
+    typeof cb == "function" && cb(tempData)
+    // 错误收集并提示或者发送
+  }
 }
 
 /* -----------------------------for:index:end------------------------ */

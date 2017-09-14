@@ -62,5 +62,7 @@ App({
     PASSWORD_GET: "https://wechat.sky31.com/xcx/gonggong/getOtherPw.php", // 获取图书馆和一卡通密码
     LIBRARY_READER_INFO_OLD: "https://api.sky31.com/library/reader_info.php",
     LIBRARY_RENT_LIST_OLD: "https://api.sky31.com/library/rent_list.php", 
+    ECARD_BALANCE_OLD: "https://api.sky31.com/ecard/balance.php",
+    ECARD_BILLING_OLD: "https://api.sky31.com/ecard/billing.php",
   }
 })
