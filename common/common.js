@@ -17,10 +17,13 @@ function getUserInfo(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
-        getUserInfoSuccess(res)
-        typeof cb == "function" && cb(app.globalData.userInfo)
+        typeof cb == "function" && cb(getUserInfoSuccess(res))
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -32,16 +35,19 @@ function getUserInfo(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
-        getUserInfoSuccess(res)
-        typeof cb == "function" && cb(app.globalData.userInfo)
+        typeof cb == "function" && cb(getUserInfoSuccess(res))
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   }
 }
 
-/* 服务于getUserInfo的复用函数 */
+/* 服务于getUserInfo的复用函数————进行数据处理 */
 function getUserInfoSuccess(res) {
   if (res.data.code == 0) {
     console.log("登录成功!!!")
@@ -88,6 +94,7 @@ function getUserInfoSuccess(res) {
       console.log("拱拱个人信息获取并处理成功")
       console.log(userInfo)
     })
+    return userInfo
   }
 }
 
@@ -99,13 +106,17 @@ function getTimer(cb) {
       role: app.globalData.app_AU,
       hash: app.globalData.app_ID,
     },
-    complete: function (res) {
+    success: function (res) {
       app.globalData.isEnd++
       if (res.data.code == 0) {
         console.log("官方到计时获取成功")
         console.log(res)
         typeof cb == "function" && cb(res.data.data)
       }
+    },
+    fail: function (res) {
+      app.globalData.isEnd++
+      typeof cb == "function" && cb(null)
     }
   })
 }
@@ -121,10 +132,13 @@ function getCourse(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
-        getCourseSuccess(res)
-        typeof cb == "function" && cb(todayCourse)
+        typeof cb == "function" && cb(getCourseSuccess(res))
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -136,15 +150,19 @@ function getCourse(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
         typeof cb == "function" && cb(getCourseSuccess(res))
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   }
 }
 
-/* 服务于getCourse的复用函数 */
+/* 服务于getCourse的复用函数————获取今日课程 */
 function getCourseSuccess(res) {
   if (res.data.code == 0) {
     console.log("课程信息获取成功")
@@ -186,10 +204,13 @@ function getLibrary(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
-        getLibrarySuccess(res)
-        typeof cb == "function" && cb(app.globalData.libraryInfo)
+        typeof cb == "function" && cb(getLibrarySuccess(res))
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -201,10 +222,13 @@ function getLibrary(cb) {
         sid: app.globalData.sid,
         password: app.globalData.librarypw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
-        getLibrarySuccess(res)
-        typeof cb == "function" && cb(app.globalData.libraryInfo)
+        typeof cb == "function" && cb(getLibrarySuccess(res))
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   }
@@ -238,6 +262,7 @@ function getLibrarySuccess(res) {
       console.log("图书信息处理成功")
       console.log(libraryInfo)
     })
+    return libraryInfo
   }
 }
 
@@ -252,14 +277,17 @@ function getLibraryBook(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           console.log("借阅信息获取成功")
           console.log(res)
-          var libraryBook = res.data.data
-          typeof cb == "function" && cb(libraryBook)
+          typeof cb == "function" && cb(res.data.data)
         }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -271,14 +299,17 @@ function getLibraryBook(cb) {
         sid: app.globalData.sid,
         password: app.globalData.librarypw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           console.log("借阅信息获取成功")
           console.log(res)
-          var libraryBook = res.data.data
-          typeof cb == "function" && cb(libraryBook)
+          typeof cb == "function" && cb(res.data.data)
         }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   }
@@ -295,13 +326,18 @@ function getEcard(cb) {
         sid: app.globalData.sid,
         password: app.globalData.portalpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
+          app.globalData.ecardInfo['balance'] = res.data.data
           console.log("一卡通信息获取成功")
           console.log(res)
-          typeof cb == "function" && cb(res.data.data)
+          typeof cb == "function" && cb(app.globalData.ecardInfo)
         }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   } else if (app.globalData.loginType == 2) {
@@ -313,13 +349,18 @@ function getEcard(cb) {
         sid: app.globalData.sid,
         password: app.globalData.ecardpw
       },
-      complete: function (res) {
+      success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
+          app.globalData.ecardInfo['balance'] = res.data.data
           console.log("一卡通信息获取成功")
           console.log(res)
-          typeof cb == "function" && cb(res.data.data)
+          typeof cb == "function" && cb(app.globalData.ecardInfo)
         }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
       }
     })
   }
@@ -327,7 +368,6 @@ function getEcard(cb) {
 
 /* 获取校园网账户信息 */
 function getNetInfo(cb) {
-  console.log("校园网账户信息获取中-----------------------------------")
   wx.request({
     url: app.globalData.CAMPUS_NET,
     data: {
@@ -335,28 +375,32 @@ function getNetInfo(cb) {
       hash: app.globalData.app_ID,
       sid: app.globalData.sid,
     },
-    fail: function (res) {
-      console.log("校园网账户信息 获取失败了！！！！！！！！！！！！！！！！！！！")
-    },
-    complete: function (res) {
-      console.log("校园网账户信息获取结束!!!!!!!!!!!!!!!!!!!!!!")
-      console.log(res)
+    success: function (res) {
       app.globalData.isEnd++
-      checkError(res, "校园网账户信息")
+      if (res.data.code == 0) {
+        console.log("校园网信息获取成功")
+        console.log(res)
+        typeof cb == "function" && cb(res.data.data)
+      }
+    },
+    fail: function (res) {
+      app.globalData.isEnd++
+      console.log("校园网账户信息 获取失败了！！！！！！！！！！！！！！！！！！！")
+      typeof cb == "function" && cb(null)
     }
   })
 }
 
 /* 错误收集 */
-function checkError(res, requestName) {
-  if (res.errMsg != "request:fail timeout") {
-    typeof cb == "function" && cb(res.data.data)
-  } else {
-    var tempData = null
-    typeof cb == "function" && cb(tempData)
-    // 错误收集并提示或者发送
-  }
-}
+// function checkError(res, requestName) {
+//   if (res.errMsg != "request:fail timeout") {
+//     typeof cb == "function" && cb(res.data.data)
+//   } else {
+//     var tempData = null
+//     typeof cb == "function" && cb(tempData)
+//     // 错误收集并提示或者发送
+//   }
+// }
 
 /* -----------------------------for:index:end------------------------ */
 

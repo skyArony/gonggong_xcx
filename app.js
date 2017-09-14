@@ -12,9 +12,10 @@ App({
     portalpw: null, // 登录密码——作为登录的状态的标志
     librarypw: null, // 图书馆密码
     ecardpw: null, // e卡通密码
-    userInfo: null,
+    userInfo: null, // 用户信息
     libraryInfo: null, // 图书馆信息
     courseInfo: null, // 课程信息
+    ecardInfo: {}, // e卡通信息
     availableTimer: null, // 当前有效的Timer
     currentWeek: null, // 当前周数
     isEnd: 0, // 数据加载的结束判断，用来检验页面数据是否加载完成

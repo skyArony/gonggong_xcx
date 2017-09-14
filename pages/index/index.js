@@ -24,7 +24,7 @@ Page({
   /**
    * 函数
    */
-  
+
   /* 敬请期待 */
   waiting: function () {
     wx.showModal({
@@ -180,6 +180,8 @@ Page({
     that.data.indexData = {}
     // 获取拱拱个人信息并设置到视图层
     common.getUserInfo(function (userInfo) {
+      console.log("以下是通过网络获取到的个人信息······························")
+      console.log(userInfo)
       that.data.indexData.userInfo = userInfo
       that.endCheck()
     })
@@ -201,7 +203,6 @@ Page({
     // 获取校园余额并设置到视图层
     common.getNetInfo(function (netInfo) {
       that.data.indexData.netInfo = netInfo
-      console.log("我要执行检查了，我在校园网获取处")
       that.endCheck()
     })
   },
@@ -209,6 +210,8 @@ Page({
   /* 设置数据到视图层 */
   setIndexData: function () {
     // 设置头像等信息
+    console.log("以下是获取到的个人信息")
+    console.log(this.data.indexData)
     this.setData({
       userImg: this.data.indexData.userInfo['img']
     })
@@ -224,12 +227,12 @@ Page({
     })
     // 设置图书馆信息
     this.setData({
-      bookTimer: this.data.indexData.libraryInfo.libraryBook['bookTimer'],
+      bookTimer: this.data.indexData.libraryInfo.bookTimer,
       libraryDebt: this.data.indexData.libraryInfo.libararyUser['debt']
     })
     // 设置e卡通信息
     this.setData({
-      balance: this.data.indexData.eCardInfo.balance,
+      balance: this.data.indexData.eCardInfo.balance.blance,
       unclaimed: this.data.indexData.eCardInfo.unclaimed
     })
     // 设置校园卡余额
