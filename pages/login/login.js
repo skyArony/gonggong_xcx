@@ -1,5 +1,6 @@
 // login.js
 var app = getApp()
+
 Page({
 
   /**
@@ -14,7 +15,7 @@ Page({
     var that = this
     wx.showNavigationBarLoading()
     // 选择使用信息门户系列接口还是教务系统系列接口
-    app.globalData.loginType = e.detail.value.loginType
+    wx.setStorageSync('loginType', e.detail.value.loginType)
     if (e.detail.value.loginType == 1) {
       wx.request({
         url: app.globalData.LOGIN,
@@ -126,19 +127,7 @@ Page({
     }
   },
 
-  /* 获取图书馆和一卡通密码 */
-  getOtherPw: function () {
-    wx.request({
-      url: app.globalData.PASSWORD_GET,
-      data: {
-        sid: app.globalData.sid,
-      },
-      success: function (res) {
-        app.globalData.librarypw = res.data.libraryPw
-        app.globalData.ecardpw   = res.data.ecardPw
-      }
-    })
-  },
+
 
   /* -------------------------------------------------------复用函数--------------------------------- */
   loginSuccess: function (res, e) {
@@ -146,14 +135,13 @@ Page({
     if (res.data.code == 0) {
       console.log("登录成功")
       // 登录成功,存储数据
-      wx.hideNavigationBarLoading()
       app.globalData.sid = e.detail.value.sid
+      wx.setStorageSync('sid', e.detail.value.sid)
       wx.setStorageSync('portalpw', e.detail.value.password)
       app.globalData.portalpw = e.detail.value.portalpw
       // 绑定学号
       that.bindSid()
-      // 获取图书馆密码和一卡通密码
-      that.getOtherPw()
+      wx.hideNavigationBarLoading()
       // 跳转到主页
       wx.reLaunch({
         url: '/pages/index/index'

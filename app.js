@@ -13,7 +13,7 @@ App({
     librarypw: null, // 图书馆密码
     ecardpw: null, // e卡通密码
     userInfo: null, // 用户信息
-    libraryInfo: null, // 图书馆信息
+    libraryInfo: {}, // 图书馆信息
     courseInfo: null, // 课程信息
     ecardInfo: {}, // e卡通信息
     availableTimer: null, // 当前有效的Timer
