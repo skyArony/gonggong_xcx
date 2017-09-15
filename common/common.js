@@ -56,7 +56,7 @@ function getUserInfo(cb) {
 function getTimerInfo(cb) {
   var userInfo = app.globalData.userInfo
   // 将官方timer和私人timer进行合并然后再将数据并入用户信息中
-  getTimer(function (officalTimer) {
+  _handleTimer(function (officalTimer) {
     var userTimer = JSON.parse(userInfo['timer']) // 私人计时
     var availableTimer = new Array() // 可用（未过期的官方计时和所有的私人计时）计时容器
     // 用户timer过期的还是要放入
@@ -99,7 +99,7 @@ function getTimerInfo(cb) {
 }
 
 /* timer数据获取及处理，此函数服务getTimerInfo，不向外暴露 */
-function getTimer(cb) {
+function _handleTimer(cb) {
   wx.request({
     url: app.globalData.GONGGONG_OFFICALTIMER,
     data: {
@@ -133,7 +133,7 @@ function getCourse(cb) {
       success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
-          typeof cb == "function" && cb(getCourseSuccess(res))
+          typeof cb == "function" && cb(_getTodayCorse(res))
         }
       },
       fail: function (res) {
@@ -153,7 +153,7 @@ function getCourse(cb) {
       success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
-          typeof cb == "function" && cb(getCourseSuccess(res))
+          typeof cb == "function" && cb(_getTodayCorse(res))
         }
       },
       fail: function (res) {
@@ -165,7 +165,7 @@ function getCourse(cb) {
 }
 
 /* 服务于getCourse的复用函数————获取今日课程 */
-function getCourseSuccess(res) {
+function _getTodayCorse(res) {
   if (res.data.code == 0) {
     app.globalData.courseInfo = res.data.data
     // 今日课程信息
@@ -191,7 +191,7 @@ function getCourseSuccess(res) {
   }
 }
 
-/* 获取图书馆信息 */
+/* 获取图书馆读者信息 */
 function getLibrary(cb) {
   if (app.globalData.loginType == 1) {
     wx.request({
@@ -238,7 +238,7 @@ function getLibrary(cb) {
   }
 }
 
-/* 服务于getLibrary的复用函数 */
+/* 获取图书馆读者借阅信息 */
 function getLibraryRentList(cb) {
   var libraryInfo = {}
   var libararyUser = app.globalData.libraryInfo.libararyUser
@@ -247,7 +247,7 @@ function getLibraryRentList(cb) {
   if (debt > 0) debt = -debt
   else debt = "0.00"
   libararyUser['debt'] = debt
-  getLibraryBook(function (libraryBook) {
+  _getLibraryBook(function (libraryBook) {
     libraryInfo.libararyUser = libararyUser
     libraryInfo.libraryBook = libraryBook
     // 剩余还书天数
@@ -267,7 +267,7 @@ function getLibraryRentList(cb) {
 }
 
 /* 图书借阅信息获取及处理，服务于getLibraryRentList，不向外暴露接口 */
-function getLibraryBook(cb) {
+function _getLibraryBook(cb) {
   if (app.globalData.loginType == 1) {
     wx.request({
       url: app.globalData.LIBRARY_RENT_LIST,

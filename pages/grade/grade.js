@@ -39,6 +39,10 @@ Page({
     }
   },
 
+  getGradeData: function () {
+
+  },
+
   setGradeData: function () {
 
   },
