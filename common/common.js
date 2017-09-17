@@ -476,64 +476,74 @@ function getGradeInfo(cb) {
 function _getALLRank(gradeData, cb) {
   var termcode = 8
   for (var x in gradeData.termGrade) {
-    if (gradeData.termGrade[x].length > 0) {
-      var creditObj = _countCredit(gradeData.termGrade[x])
-      if (app.globalData.loginType == 1) {
-        wx.request({
-          url: app.globalData.EDU_RANK,
-          data: {
-            role: app.globalData.app_AU,
-            hash: app.globalData.app_ID,
-            sid: app.globalData.sid,
-            password: app.globalData.portalpw,
-            termcode: termcode--
-          },
-          success: function (res) {
-            if (res.data.code == 0) {
-              console.log("第" + (termcode + 1) + "学期的绩点排名获取成功")
+    console.log(termcode)
+    console.log(x);
+
+    (function(x){
+      if (gradeData.termGrade[x].length > 0) {
+        var creditObj = _countCredit(gradeData.termGrade[x])
+        console.log(creditObj)
+        if (app.globalData.loginType == 1) {
+          console.log(creditObj)
+        } else if (app.globalData.loginType == 2) {
+          wx.request({
+            url: app.globalData.EDU_RANK_OLD,
+            data: {
+              role: app.globalData.app_AU,
+              hash: app.globalData.app_ID,
+              sid: app.globalData.sid,
+              password: app.globalData.portalpw,
+              termcode: termcode--
+            },
+            success: function (res) {
+              if (res.data.code == 0) {
+                console.log("第学期的绩点排名获取成功" + termcode)
+                console.log(res.data.data.gpa)
+                console.log(x)
+                gradeData.termGrade[x].push(res.data.data)
+                gradeData.termGrade[x][gradeData.termGrade[x].length - 1].totalCredit = creditObj.totalCredit
+                gradeData.termGrade[x][gradeData.termGrade[x].length - 1].requiredCredit = creditObj.requiredCredit
+                gradeData.counter++
+                typeof cb == "function" && cb(gradeData)
+              }
+            },
+            fail: function (res) {
+              console.log("学期的绩点排名获取失败！！！！！！！！！！！")
               console.log(res)
-              gradeData.termGrade[x].push(res.data.data)
-              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].totalCredit = creditObj.totalCredit
-              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].requiredCredit = creditObj.requiredCredit
-              gradeData.counter++
-              typeof cb == "function" && cb(gradeData)
+              termcode++
+              wx.request({
+                url: app.globalData.EDU_RANK_OLD,
+                data: {
+                  role: app.globalData.app_AU,
+                  hash: app.globalData.app_ID,
+                  sid: app.globalData.sid,
+                  password: app.globalData.portalpw,
+                  termcode: termcode--
+                },
+                success: function (res) {
+                  if (res.data.code == 0) {
+                    console.log("第二次学期的绩点排名获取成功" + termcode)
+                    console.log(res.data.data.gpa)
+                    console.log(x)
+                    gradeData.termGrade[x].push(res.data.data)
+                    gradeData.termGrade[x][gradeData.termGrade[x].length - 1].totalCredit = creditObj.totalCredit
+                    gradeData.termGrade[x][gradeData.termGrade[x].length - 1].requiredCredit = creditObj.requiredCredit
+                    gradeData.counter++
+                    typeof cb == "function" && cb(gradeData)
+                  }
+                },
+                fail: function (res) {
+                  console.log("第二次学期的绩点排名获取失败！！！！！！！！！！！")
+                }
+              })
             }
-          },
-          fail: function (res) {
-            console.log("第" + (termcode + 1) + "学期的绩点排名获取失败！！！！！！！！！！！")
-            console.log(res)
-          }
-        })
-      } else if (app.globalData.loginType == 2) {
-        wx.request({
-          url: app.globalData.EDU_RANK_OLD,
-          data: {
-            role: app.globalData.app_AU,
-            hash: app.globalData.app_ID,
-            sid: app.globalData.sid,
-            password: app.globalData.portalpw,
-            termcode: termcode--
-          },
-          success: function (res) {
-            if (res.data.code == 0) {
-              console.log("第" + (termcode + 1) + "学期的绩点排名获取成功")
-              console.log(res)
-              gradeData.termGrade[x].push(res.data.data)
-              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].totalCredit = creditObj.totalCredit
-              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].requiredCredit = creditObj.requiredCredit
-              gradeData.counter++
-              typeof cb == "function" && cb(gradeData)
-            }
-          },
-          fail: function (res) {
-            console.log("第" + (termcode + 1) + "学期的绩点排名获取失败！！！！！！！！！！！")
-            console.log(res)
-          }
-        })
+          })
+        }
+      } else {
+        termcode--
       }
-    } else {
-      termcode--
-    }
+    })(x)
+    
   }
 }
 
