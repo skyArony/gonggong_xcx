@@ -42,6 +42,27 @@ function getUserInfo(cb) {
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
           typeof cb == "function" && cb(res.data.data)
+        } else if (res.data.code == 5) {
+          /* 可能会验证码识别错误,所以执行两次,但仍然无法保证两次都正确 */
+          wx.request({
+            url: app.globalData.LOGIN_OLD,
+            data: {
+              role: app.globalData.app_AU,
+              hash: app.globalData.app_ID,
+              sid: app.globalData.sid,
+              password: app.globalData.portalpw
+            },
+            success: function (res) {
+              if (res.data.code == 0) {
+                app.globalData.userInfo = res.data.data
+                typeof cb == "function" && cb(res.data.data)
+              }
+            },
+            fail: function (res) {
+              app.globalData.isEnd++
+              typeof cb == "function" && cb(null)
+            }
+          })
         }
       },
       fail: function (res) {
@@ -51,6 +72,7 @@ function getUserInfo(cb) {
     })
   }
 }
+
 
 /* 处理timer */
 function getTimerInfo(cb) {
@@ -398,28 +420,184 @@ function getNetInfo(cb) {
 
 /* -----------------------------for:grade:start------------------------ */
 
-/* 获取所有成绩信息 */
+/* 对成绩数据进行处理 */
 function getGradeInfo(cb) {
-  wx.request({
-    url: app.globalData.EDU_GRADE_DETAILS,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw,
-      all: "all"
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("成绩详情信息获取成功")
-        console.log(res)
-        typeof cb == "function" && cb(res.data.data)
+  _getAllGrade(function (gradeInfo) {
+    var gradeData = {}
+    gradeData.pastTerm = 0
+    gradeData.counter = 0
+    gradeData.termGrade = {}
+    // 将获取到的数据进行处理,以下九个数组分别为总数据容器和八个学期数据的容器
+    gradeData.termGrade.大四下学期 = []
+    gradeData.termGrade.大四上学期 = []
+    gradeData.termGrade.大三下学期 = []
+    gradeData.termGrade.大三上学期 = []
+    gradeData.termGrade.大二下学期 = []
+    gradeData.termGrade.大二上学期 = []
+    gradeData.termGrade.大一下学期 = []
+    gradeData.termGrade.大一上学期 = []
+    if (gradeInfo.length == 0) {
+      gradeData.status = 1
+    } else {
+      for (var x in gradeInfo) {
+        if (gradeInfo[x]['term'] == '1') {
+          gradeData.termGrade.大一上学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '2') {
+          gradeData.termGrade.大一下学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '3') {
+          gradeData.termGrade.大二上学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '4') {
+          gradeData.termGrade.大二下学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '5') {
+          gradeData.termGrade.大三上学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '6') {
+          gradeData.termGrade.大三下学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '7') {
+          gradeData.termGrade.大四上学期.push(gradeInfo[x])
+        } else if (gradeInfo[x]['term'] == '8') {
+          gradeData.termGrade.大四下学期.push(gradeInfo[x])
+        }
       }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
+      for (var y in gradeData.termGrade) {
+        if (gradeData.termGrade[y].length > 0) {
+          gradeData.pastTerm++
+        }
+      }
+      _getALLRank(gradeData, function (gradeData) {
+        if (gradeData.counter == gradeData.pastTerm) {
+          typeof cb == "function" && cb(gradeData)
+        }
+      })
     }
   })
+}
+
+/* 获取所有学期的绩点成绩 */
+function _getALLRank(gradeData, cb) {
+  var termcode = 8
+  for (var x in gradeData.termGrade) {
+    if (gradeData.termGrade[x].length > 0) {
+      var creditObj = _countCredit(gradeData.termGrade[x])
+      if (app.globalData.loginType == 1) {
+        wx.request({
+          url: app.globalData.EDU_RANK,
+          data: {
+            role: app.globalData.app_AU,
+            hash: app.globalData.app_ID,
+            sid: app.globalData.sid,
+            password: app.globalData.portalpw,
+            termcode: termcode--
+          },
+          success: function (res) {
+            if (res.data.code == 0) {
+              console.log("第" + (termcode + 1) + "学期的绩点排名获取成功")
+              console.log(res)
+              gradeData.termGrade[x].push(res.data.data)
+              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].totalCredit = creditObj.totalCredit
+              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].requiredCredit = creditObj.requiredCredit
+              gradeData.counter++
+              typeof cb == "function" && cb(gradeData)
+            }
+          },
+          fail: function (res) {
+            console.log("第" + (termcode + 1) + "学期的绩点排名获取失败！！！！！！！！！！！")
+            console.log(res)
+          }
+        })
+      } else if (app.globalData.loginType == 2) {
+        wx.request({
+          url: app.globalData.EDU_RANK_OLD,
+          data: {
+            role: app.globalData.app_AU,
+            hash: app.globalData.app_ID,
+            sid: app.globalData.sid,
+            password: app.globalData.portalpw,
+            termcode: termcode--
+          },
+          success: function (res) {
+            if (res.data.code == 0) {
+              console.log("第" + (termcode + 1) + "学期的绩点排名获取成功")
+              console.log(res)
+              gradeData.termGrade[x].push(res.data.data)
+              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].totalCredit = creditObj.totalCredit
+              gradeData.termGrade[x][gradeData.termGrade[x].length - 1].requiredCredit = creditObj.requiredCredit
+              gradeData.counter++
+              typeof cb == "function" && cb(gradeData)
+            }
+          },
+          fail: function (res) {
+            console.log("第" + (termcode + 1) + "学期的绩点排名获取失败！！！！！！！！！！！")
+            console.log(res)
+          }
+        })
+      }
+    } else {
+      termcode--
+    }
+  }
+}
+
+/* 获取所有成绩信息 */
+function _getAllGrade(cb) {
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.EDU_GRADE_DETAILS,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw,
+        all: "all"
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          console.log("成绩详情信息获取成功")
+          console.log(res)
+          typeof cb == "function" && cb(res.data.data)
+        }
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+      }
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.EDU_GRADE_DETAILS_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw,
+        all: "all"
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          console.log("成绩详情信息获取成功")
+          console.log(res)
+          typeof cb == "function" && cb(res.data.data)
+        }
+      },
+      complete: function (res) {
+        app.globalData.isEnd++
+      }
+    })
+  }
+}
+
+/* 计算总学分和必修学分 */
+function _countCredit(termGrade) {
+  var totalCredit = 0 // 总学分
+  var requiredCredit = 0 // 必修学分
+  for (var x in termGrade) {
+    if (termGrade[x]['type'] == '必修') {
+      requiredCredit += parseFloat(termGrade[x]['credit'])
+    }
+    totalCredit += parseFloat(termGrade[x]['credit'])
+  }
+  var creditObj = {}
+  creditObj.requiredCredit = requiredCredit
+  creditObj.totalCredit = totalCredit
+  return creditObj
 }
 
 /* 获取总排名 */
@@ -574,6 +752,7 @@ module.exports.getLibrary = getLibrary
 module.exports.getLibraryRentList = getLibraryRentList
 module.exports.getEcard = getEcard
 module.exports.getNetInfo = getNetInfo
+module.exports.getGradeInfo = getGradeInfo
 module.exports.getGradeInfo
 module.exports.getRankInfo
 
