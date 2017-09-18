@@ -57,7 +57,6 @@ Page({
     // 用学号进行数据获取
     if (app.globalData.sid) {
       // 已有学号，进行数据获取
-      wx.showNavigationBarLoading() // 导航条显示加载
       // 检查本地缓存是否存有密码
       if (wx.getStorageSync('portalpw')) {
         // password存入全局变量
@@ -118,10 +117,10 @@ Page({
     // 如果距离上次获取数据的时间超过了两个小时则重新获取数据
     if (this.data.indexData && (new Date().getTime() - this.data.indexData.refreshTime) < 7200000) {
       // 从缓存中取得数据放到全局变量，准备进行数据设置
-      wx.hideNavigationBarLoading()
       this.setIndexData()
     } else {
       this.data.indexData = {}
+      wx.showNavigationBarLoading() // 导航条显示加载
       this.getIndexData()
     }
   },
