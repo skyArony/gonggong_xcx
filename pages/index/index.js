@@ -119,8 +119,6 @@ Page({
       // 从缓存中取得数据放到全局变量，准备进行数据设置
       this.setIndexData()
     } else {
-      this.data.indexData = {}
-      wx.showNavigationBarLoading() // 导航条显示加载
       this.getIndexData()
     }
   },
@@ -128,6 +126,8 @@ Page({
   /* 进行本页所需的数据获取 */
   getIndexData: function () {
     var that = this
+    this.data.indexData = {}
+    wx.showNavigationBarLoading() // 导航条显示加载
     app.globalData.loginType = wx.getStorageSync('loginType')
     // 获取拱拱个人信息并设置到视图层
     common.getUserInfo(function (userInfo) {
@@ -170,6 +170,7 @@ Page({
     // 设置头像等信息
     console.log("以下是获取到的个人信息")
     console.log(this.data.indexData)
+    wx.stopPullDownRefresh() // 停止下拉状态
     // if判断可以防止数据为空时的报错，且在数据接口出问题是仍然采用旧数据
     if (this.data.indexData.userInfo)
       this.setData({
@@ -196,7 +197,7 @@ Page({
     // 设置e卡通信息
     if (this.data.indexData.eCardInfo)
       this.setData({
-        balance: this.data.indexData.eCardInfo.balance.blance,
+        balance: this.data.indexData.eCardInfo.balance.balance,
         unclaimed: this.data.indexData.eCardInfo.unclaimed
       })
     // 设置校园卡余额
@@ -274,22 +275,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    var that = this
-    // 检查session状态
-    wx.checkSession({
-      success: function () {
-        //session 未过期，并且在本生命周期一直有效
-        that.init()
-      },
-      fail: function () {
-        // 重新登录
-        wx.login({
-          success: function (res) {
-            that.init()
-          }
-        })
-      }
-    })
+    this.getIndexData()
   },
 
   /**
