@@ -40,7 +40,8 @@ Page({
     var that = this
     wx.showNavigationBarLoading() // 导航条显示加载
     common.getRankInfo(function (rankInfo) {
-      that.endCheck("rankInfo", rankInfo)
+      if (rankInfo) that.data.rankInfo = rankInfo
+      that.endCheck("rankInfo")
     })
   },
 
@@ -48,7 +49,8 @@ Page({
     var that = this
     wx.showNavigationBarLoading() // 导航条显示加载
     common.getGradeInfo(function (gradeData) {
-      that.endCheck("gradeData", gradeData)
+      if (gradeData) that.data.gradeData = gradeData
+      that.endCheck("gradeData")
     })
   },
 
@@ -75,19 +77,17 @@ Page({
   },
 
   /* 数据加载检查 */
-  endCheck: function (type, data) {
+  endCheck: function (type) {
     // 本页面加载项：
     // 整个页面的加载态在课程信息加载完后结束
     if (type == "gradeData") {
-      data.refreshTime = new Date().getTime()
-      this.data.gradeData = data
+      this.data.gradeData.refreshTime = new Date().getTime()
       this.setGradeDataDown()
       wx.setStorageSync(type, this.data.gradeData)
       this.data.isEnd++
     }
     if (type == "rankInfo") {
-      data.refreshTime = new Date().getTime()
-      this.data.rankInfo = data
+      this.data.rankInfo.refreshTime = new Date().getTime()
       this.setGradeDataUp()
       wx.setStorageSync(type, this.data.rankInfo)
       this.data.isEnd++

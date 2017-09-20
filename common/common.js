@@ -73,7 +73,6 @@ function getUserInfo(cb) {
   }
 }
 
-
 /* 处理timer */
 function getTimerInfo(cb) {
   var userInfo = app.globalData.userInfo
@@ -156,6 +155,8 @@ function getCourse(cb) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(_getTodayCorse(res))
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -176,6 +177,8 @@ function getCourse(cb) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(_getTodayCorse(res))
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -190,16 +193,29 @@ function getCourse(cb) {
 function _getTodayCorse(res) {
   if (res.data.code == 0) {
     app.globalData.courseInfo = res.data.data
+    // 时令表
+    var winter_start = ["8:00", "8:55", "10:10", "11:05", "14:00", "14:55", "16:10", "17:05", "19:00", "19:55", "20:50"]
+    var winter_end   = ["8:45", "9:40", "10:55", "11:50", "14:45", "15:40", "16:55", "17:50", "19:45", "20:40", "21:35"]
+    var summer_start = ["8:00", "8:55", "10:10", "11:05", "14:30", "15:25", "16:40", "17:35", "19:30", "20:25", "21:20"]
+    var summer_end   = ["8:45", "9:40", "10:55", "11:50", "15:15", "16:10", "17:25", "18:20", "19:15", "21:10", "22:05"]
     // 今日课程信息
     var courseInfo = res.data.data
     var todayCourseNum = 0
     var todayCourseDetail = new Array()
     var week = new Date().getDay() // 星期
+    var month = new Date().getMonth() // 月份
     for (var tCourse in courseInfo[week]) {
       for (var course in courseInfo[week][tCourse]) {
         var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
         if (inArray(weekArray, app.globalData.currentWeek)) {
           todayCourseNum++
+          if (month == 5 || month == 6 || month == 7 || month == 8  || month == 9) {
+            courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] -1]
+            courseInfo[week][tCourse][course]['end_time'] = summer_end[courseInfo[week][tCourse][course]['section_end'] -1]
+          } else {
+            courseInfo[week][tCourse][course]['start_time'] = winter_start[courseInfo[week][tCourse][course]['section_start'] -1]
+            courseInfo[week][tCourse][course]['end_time'] = winter_end[courseInfo[week][tCourse][course]['section_end'] -1]
+          }
           todayCourseDetail.push(courseInfo[week][tCourse][course])
         }
       }
@@ -670,29 +686,29 @@ function getRankInfo(cb) {
 
 /* -----------------------------for:library:start------------------------ */
 /* 获取图书管页面借阅信息 */
-function getLibraryInfo(cb) {
-  wx.request({
-    url: app.globalData.LIBRARY_RENT_LIST,
-    data: {
-      role: app.globalData.app_AU,
-      hash: app.globalData.app_ID,
-      sid: app.globalData.sid,
-      password: app.globalData.portalpw,
-    },
-    success: function (res) {
-      if (res.data.code == 0) {
-        console.log("图书借阅信息获取成功")
-        console.log(res)
-        app.globalData.libraryInfo.rentList = res.data.data
-        app.globalData.libraryInfo.bookNum = res.data.data.length
-        typeof cb == "function" && cb(app.globalData.libraryInfo)
-      }
-    },
-    complete: function (res) {
-      app.globalData.isEnd++
-    }
-  })
-}
+// function getLibraryInfo(cb) {
+//   wx.request({
+//     url: app.globalData.LIBRARY_RENT_LIST,
+//     data: {
+//       role: app.globalData.app_AU,
+//       hash: app.globalData.app_ID,
+//       sid: app.globalData.sid,
+//       password: app.globalData.portalpw,
+//     },
+//     success: function (res) {
+//       if (res.data.code == 0) {
+//         console.log("图书借阅信息获取成功")
+//         console.log(res)
+//         app.globalData.libraryInfo.rentList = res.data.data
+//         app.globalData.libraryInfo.bookNum = res.data.data.length
+//         typeof cb == "function" && cb(app.globalData.libraryInfo)
+//       }
+//     },
+//     complete: function (res) {
+//       app.globalData.isEnd++
+//     }
+//   })
+// }
 
 /* -----------------------------for:library:end------------------------ */
 

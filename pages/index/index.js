@@ -2,6 +2,7 @@
 // 获取应用实例
 var app = getApp()
 var common = require('../../common/common.js')
+
 Page({
 
   /**
@@ -12,13 +13,14 @@ Page({
     todayCourseDetail: null, // 今天的课程详细信息
     showTimer: null, // timer信息
     bookTimer: "- 天",
-    balance: "0.00", // 一卡通余额
-    unclaimed: "0.00", // 一卡通待领
-    libraryDebt: "0.00", // 图书馆欠费
-    net: "0.00", // 校园网余额
+    balance: "N/A", // 一卡通余额
+    unclaimed: "N/A", // 一卡通待领
+    libraryDebt: "N/A", // 图书馆欠费
+    net: "N/A", // 校园网余额
     userImg: "../../images/user_none.png", // 用户头像
     status: 0, // 状态：0-数据正在加载，1-未登录，2-已登录，3-今天没有课
     indexData: {}, // 存储此页面的数据
+    oldData: {}, // 上一次的数据
   },
 
   /**
@@ -126,6 +128,7 @@ Page({
   /* 进行本页所需的数据获取 */
   getIndexData: function () {
     var that = this
+    this.data.oldData = this.data.indexData
     this.data.indexData = {}
     wx.showNavigationBarLoading() // 导航条显示加载
     app.globalData.loginType = wx.getStorageSync('loginType')
@@ -134,13 +137,16 @@ Page({
       common.getTimerInfo(function (userInfo) {
         console.log(userInfo)
         if (userInfo) that.data.indexData.userInfo = userInfo
+        else that.data.indexData.userInfo = that.data.oldData.userInfo
         that.endCheck("个人信息加载完毕，")
       })
     })
     // 获取课程信息并设置到视图层
     common.getCourse(function (courseInfo) {
       console.log(courseInfo)
+      console.log(that.data.oldData)
       if (courseInfo) that.data.indexData.courseInfo = courseInfo
+      else that.data.indexData.courseInfo = that.data.oldData.courseInfo
       that.endCheck("课程信息加载完毕，")
     })
     // 获取图书馆信息并设置到视图层
@@ -148,6 +154,7 @@ Page({
       common.getLibraryRentList(function (libraryInfo) {
         console.log(libraryInfo)
         if (libraryInfo) that.data.indexData.libraryInfo = libraryInfo
+        else that.data.indexData.libraryInfo = that.data.oldData.libraryInfo
         that.endCheck("图书馆信息加载完毕，")
       })
     })
@@ -155,12 +162,14 @@ Page({
     common.getEcard(function (eCardInfo) {
       console.log(eCardInfo)
       if (eCardInfo) that.data.indexData.eCardInfo = eCardInfo
+      else that.data.indexData.eCardInfo = that.data.oldData.eCardInfo
       that.endCheck("一卡通信息加载完毕，")
     })
     // 获取校园余额并设置到视图层
     common.getNetInfo(function (netInfo) {
       console.log(netInfo)
       if (netInfo) that.data.indexData.netInfo = netInfo
+      else that.data.indexData.netInfo = that.data.oldData.netInfo
       that.endCheck("校园网信息加载完毕，")
     })
   },
