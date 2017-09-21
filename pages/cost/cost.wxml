@@ -3,12 +3,12 @@
   <view class="top">
     <view class="top-card">
       <view class="top-line">
-        <view class="tline-left">校园卡</view>
-        <view class="tline-right">正常可用</view>
+        <view class="tline-left">校园卡:{{ecard_id}}</view>
+        <view class="tline-right">{{status}}</view>
       </view>
       <view class="mid-line">
-        <view class="mline-money">53.88</view>
-        <view class="mline-quancun">待圈存 0.00</view>
+        <view class="mline-money">{{balance}}</view>
+        <view class="mline-quancun">待圈存 {{unclaimed}}</view>
       </view>
       <view class="bottom-line">6217 **** **** ***8 024</view>
     </view>

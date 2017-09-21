@@ -207,7 +207,7 @@ Page({
     if (this.data.indexData.eCardInfo)
       this.setData({
         balance: this.data.indexData.eCardInfo.balance.balance,
-        unclaimed: this.data.indexData.eCardInfo.unclaimed
+        unclaimed: this.data.indexData.eCardInfo.balance.unclaimed
       })
     // 设置校园卡余额
     if (this.data.indexData.netInfo)

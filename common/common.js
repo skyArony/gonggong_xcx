@@ -41,6 +41,9 @@ function getUserInfo(cb) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
+          if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
+          else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
+          if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
           typeof cb == "function" && cb(res.data.data)
         } else if (res.data.code == 5) {
           /* 可能会验证码识别错误,所以执行两次,但仍然无法保证两次都正确 */
@@ -55,6 +58,10 @@ function getUserInfo(cb) {
             success: function (res) {
               if (res.data.code == 0) {
                 app.globalData.userInfo = res.data.data
+                app.globalData.userInfo = res.data.data
+                if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
+                else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
+                if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
                 typeof cb == "function" && cb(res.data.data)
               }
             },
@@ -78,6 +85,7 @@ function getTimerInfo(cb) {
   var userInfo = app.globalData.userInfo
   // 将官方timer和私人timer进行合并然后再将数据并入用户信息中
   _handleTimer(function (officalTimer) {
+    console.log(app.globalData.userInfo)
     var userTimer = JSON.parse(userInfo['timer']) // 私人计时
     var availableTimer = new Array() // 可用（未过期的官方计时和所有的私人计时）计时容器
     // 用户timer过期的还是要放入
@@ -617,22 +625,6 @@ function _getAllGrade(cb) {
   }
 }
 
-/* 计算总学分和必修学分 */
-function _countCredit(termGrade) {
-  var totalCredit = 0 // 总学分
-  var requiredCredit = 0 // 必修学分
-  for (var x in termGrade) {
-    if (termGrade[x]['type'] == '必修') {
-      requiredCredit += parseFloat(termGrade[x]['credit'])
-    }
-    totalCredit += parseFloat(termGrade[x]['credit'])
-  }
-  var creditObj = {}
-  creditObj.requiredCredit = requiredCredit
-  creditObj.totalCredit = totalCredit
-  return creditObj
-}
-
 /* 获取总排名 */
 function getRankInfo(cb) {
   if(app.globalData.loginType == 1) {
@@ -684,33 +676,51 @@ function getRankInfo(cb) {
 
 
 
-/* -----------------------------for:library:start------------------------ */
-/* 获取图书管页面借阅信息 */
-// function getLibraryInfo(cb) {
-//   wx.request({
-//     url: app.globalData.LIBRARY_RENT_LIST,
-//     data: {
-//       role: app.globalData.app_AU,
-//       hash: app.globalData.app_ID,
-//       sid: app.globalData.sid,
-//       password: app.globalData.portalpw,
-//     },
-//     success: function (res) {
-//       if (res.data.code == 0) {
-//         console.log("图书借阅信息获取成功")
-//         console.log(res)
-//         app.globalData.libraryInfo.rentList = res.data.data
-//         app.globalData.libraryInfo.bookNum = res.data.data.length
-//         typeof cb == "function" && cb(app.globalData.libraryInfo)
-//       }
-//     },
-//     complete: function (res) {
-//       app.globalData.isEnd++
-//     }
-//   })
-// }
+/* -----------------------------for:ecard:start------------------------ */
+/* 获取用户消费信息 */
+function getBilling(cb) {
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.ECARD_BILLING,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          typeof cb == "function" && cb(res.data.data)
+        }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
+      }
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.ECARD_BILLING_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.ecardpw
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          typeof cb == "function" && cb(res.data.data)
+        }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
+      }
+    })
+  }
+}
 
-/* -----------------------------for:library:end------------------------ */
+/* -----------------------------for:ecard:end------------------------ */
 
 /* ----------------------------------------tools------------------------------------- */
 
@@ -804,6 +814,23 @@ function getOpenId(cb) {
   }
 }
 
+
+/* 计算总学分和必修学分 */
+function _countCredit(termGrade) {
+  var totalCredit = 0 // 总学分
+  var requiredCredit = 0 // 必修学分
+  for (var x in termGrade) {
+    if (termGrade[x]['type'] == '必修') {
+      requiredCredit += parseFloat(termGrade[x]['credit'])
+    }
+    totalCredit += parseFloat(termGrade[x]['credit'])
+  }
+  var creditObj = {}
+  creditObj.requiredCredit = requiredCredit
+  creditObj.totalCredit = totalCredit
+  return creditObj
+}
+
 /* -----------------全局函数------------------ */
 module.exports.getUserInfo = getUserInfo
 module.exports.getTimerInfo = getTimerInfo
@@ -814,6 +841,7 @@ module.exports.getEcard = getEcard
 module.exports.getNetInfo = getNetInfo
 module.exports.getGradeInfo = getGradeInfo
 module.exports.getRankInfo = getRankInfo
+module.exports.getBilling = getBilling
 module.exports.getRankInfo
 
 /* ---------------------tools--------------------- */
