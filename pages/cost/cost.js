@@ -11,9 +11,10 @@ Page({
     ecard_id: "00000", // 校园卡ID
     balance: "N/A",  // 余额
     unclaimed: "N/A", // 待圈存
-    status: 0, // 校园卡状态
+    status: '~', // 校园卡状态
     topData: {}, // 校园卡信息----在页面上部所以取名up
     downData: {}, // 消费信息
+    add: 2, // 所需查询的月数
   },
 
   /* 初始化 */
@@ -21,12 +22,12 @@ Page({
     this.data.topData = wx.getStorageSync('topData')
     this.data.downData  = wx.getStorageSync('downData')
     app.globalData.loginType = wx.getStorageSync('loginType')
-    if (this.data.topData && (new Date().getTime() - this.data.topData.refreshTime) < 7200000 ) {
+    if (this.data.topData && (new Date().getTime() - this.data.topData.refreshTime) < /* 7200000 */ 3) {
       this.setDataDown()
     } else {
       this.getDataDown()
     }
-    if (this.data.downData && (new Date().getTime() - this.data.downData.refreshTime) < 7200000 ) {
+    if (this.data.downData && (new Date().getTime() - this.data.downData.refreshTime) < /* 7200000 */ 3) {
       this.setDataTop()
     } else {
       this.getDataTop()
@@ -37,7 +38,12 @@ Page({
     var that = this
     wx.showNavigationBarLoading() // 导航条显示加载
     common.getEcard(function (topData) {
-      if (topData) that.data.topData = topData
+      if (topData) {
+        if (topData.balance.status == 0) topData.balance.status = "正常可用"
+        else if (topData.balance.status == 1) topData.balance.status = "卡已冻结"
+        else if (topData.balance.status == 2) topData.balance.status = "卡已挂失"
+        that.data.topData = topData
+      } 
       that.endCheck("topData")
     })
   },
@@ -45,18 +51,27 @@ Page({
   getDataDown: function () {
     var that = this
     wx.showNavigationBarLoading() // 导航条显示加载
-    common.getBilling(function (downData) {
+    common.getBilling(that.data.add, function (downData) {
       console.log(downData)
-      // if (downData) that.data.downData = downData
+      if (downData) that.data.downData = downData
       that.endCheck("downData")
     })
+  },
+
+  /* 获取更下一个月的信息 */
+  getMoreInfo: function () {
+    this.data.add++
+    this.getDataDown()
   },
 
   /* 校园卡信息获取及显示 */
   setDataTop: function () {
     if (this.data.topData) {
       this.setData({
-        
+        ecard_id: this.data.topData.balance.ecard_id, // 校园卡ID
+        balance: this.data.topData.balance.balance,  // 余额
+        unclaimed: this.data.topData.balance.unclaimed, // 待圈存
+        status: this.data.topData.balance.status, // 校园卡状态
       })
     }
   },

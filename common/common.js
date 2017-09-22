@@ -203,9 +203,9 @@ function _getTodayCorse(res) {
     app.globalData.courseInfo = res.data.data
     // 时令表
     var winter_start = ["8:00", "8:55", "10:10", "11:05", "14:00", "14:55", "16:10", "17:05", "19:00", "19:55", "20:50"]
-    var winter_end   = ["8:45", "9:40", "10:55", "11:50", "14:45", "15:40", "16:55", "17:50", "19:45", "20:40", "21:35"]
+    var winter_end = ["8:45", "9:40", "10:55", "11:50", "14:45", "15:40", "16:55", "17:50", "19:45", "20:40", "21:35"]
     var summer_start = ["8:00", "8:55", "10:10", "11:05", "14:30", "15:25", "16:40", "17:35", "19:30", "20:25", "21:20"]
-    var summer_end   = ["8:45", "9:40", "10:55", "11:50", "15:15", "16:10", "17:25", "18:20", "19:15", "21:10", "22:05"]
+    var summer_end = ["8:45", "9:40", "10:55", "11:50", "15:15", "16:10", "17:25", "18:20", "19:15", "21:10", "22:05"]
     // 今日课程信息
     var courseInfo = res.data.data
     var todayCourseNum = 0
@@ -217,12 +217,12 @@ function _getTodayCorse(res) {
         var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
         if (inArray(weekArray, app.globalData.currentWeek)) {
           todayCourseNum++
-          if (month == 5 || month == 6 || month == 7 || month == 8  || month == 9) {
-            courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] -1]
-            courseInfo[week][tCourse][course]['end_time'] = summer_end[courseInfo[week][tCourse][course]['section_end'] -1]
+          if (month == 5 || month == 6 || month == 7 || month == 8 || month == 9) {
+            courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] - 1]
+            courseInfo[week][tCourse][course]['end_time'] = summer_end[courseInfo[week][tCourse][course]['section_end'] - 1]
           } else {
-            courseInfo[week][tCourse][course]['start_time'] = winter_start[courseInfo[week][tCourse][course]['section_start'] -1]
-            courseInfo[week][tCourse][course]['end_time'] = winter_end[courseInfo[week][tCourse][course]['section_end'] -1]
+            courseInfo[week][tCourse][course]['start_time'] = winter_start[courseInfo[week][tCourse][course]['section_start'] - 1]
+            courseInfo[week][tCourse][course]['end_time'] = winter_end[courseInfo[week][tCourse][course]['section_end'] - 1]
           }
           todayCourseDetail.push(courseInfo[week][tCourse][course])
         }
@@ -502,7 +502,7 @@ function _getAllRank(gradeData, cb) {
   var termcode = 8
   for (var x in gradeData.termGrade) {
     // 以下是一个闭包函数
-    (function(x){
+    (function (x) {
       if (gradeData.termGrade[x].length > 0) {
         var creditObj = _countCredit(gradeData.termGrade[x])
         _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
@@ -527,7 +527,7 @@ function _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj) {
       },
       success: function (res) {
         if (res.data.code == 0) {
-          console.log(x+"绩点排名获取成功")
+          console.log(x + "绩点排名获取成功")
           console.log(res.data.data.gpa)
           console.log(x)
           gradeData.termGrade[x].push(res.data.data)
@@ -536,13 +536,13 @@ function _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj) {
           gradeData.counter++
           typeof cb == "function" && cb(gradeData)
         } else if (res.data.code == 5) {
-          console.log(x+"的绩点排名获取失败___验证码错误")
+          console.log(x + "的绩点排名获取失败___验证码错误")
           termcode++
           _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
         }
       },
       fail: function (res) {
-        console.log(x+"绩点排名获取失败！！！！！！！！！！！")
+        console.log(x + "绩点排名获取失败！！！！！！！！！！！")
         console.log(res)
         termcode++
         _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
@@ -560,7 +560,7 @@ function _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj) {
       },
       success: function (res) {
         if (res.data.code == 0) {
-          console.log(x+"的绩点排名获取成功")
+          console.log(x + "的绩点排名获取成功")
           console.log(res.data.data.gpa)
           console.log(x)
           gradeData.termGrade[x].push(res.data.data)
@@ -569,13 +569,13 @@ function _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj) {
           gradeData.counter++
           typeof cb == "function" && cb(gradeData)
         } else if (res.data.code == 5) {
-          console.log(x+"的绩点排名获取失败___验证码错误")
+          console.log(x + "的绩点排名获取失败___验证码错误")
           termcode++
           _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
         }
       },
       fail: function (res) {
-        console.log(x+"绩点排名获取失败！！！！！！！！！！！")
+        console.log(x + "绩点排名获取失败！！！！！！！！！！！")
         console.log(res)
         termcode++
         _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
@@ -627,7 +627,7 @@ function _getAllGrade(cb) {
 
 /* 获取总排名 */
 function getRankInfo(cb) {
-  if(app.globalData.loginType == 1) {
+  if (app.globalData.loginType == 1) {
     wx.request({
       url: app.globalData.EDU_RANK,
       data: {
@@ -678,7 +678,9 @@ function getRankInfo(cb) {
 
 /* -----------------------------for:ecard:start------------------------ */
 /* 获取用户消费信息 */
-function getBilling(cb) {
+function getBilling(add, cb) {
+  var dateObj =  _getQueryDate(add)
+  console.log(dateObj)
   if (app.globalData.loginType == 1) {
     wx.request({
       url: app.globalData.ECARD_BILLING,
@@ -686,7 +688,9 @@ function getBilling(cb) {
         role: app.globalData.app_AU,
         hash: app.globalData.app_ID,
         sid: app.globalData.sid,
-        password: app.globalData.portalpw
+        password: app.globalData.portalpw,
+        start_date: dateObj.start_date,
+        end_date: dateObj.end_date
       },
       success: function (res) {
         if (res.data.code == 0) {
@@ -705,9 +709,12 @@ function getBilling(cb) {
         role: app.globalData.app_AU,
         hash: app.globalData.app_ID,
         sid: app.globalData.sid,
-        password: app.globalData.ecardpw
+        password: app.globalData.ecardpw,
+        start_date: dateObj.start_date,
+        end_date: dateObj.end_date
       },
       success: function (res) {
+        console.log(res)
         if (res.data.code == 0) {
           typeof cb == "function" && cb(res.data.data)
         }
@@ -814,7 +821,6 @@ function getOpenId(cb) {
   }
 }
 
-
 /* 计算总学分和必修学分 */
 function _countCredit(termGrade) {
   var totalCredit = 0 // 总学分
@@ -829,6 +835,35 @@ function _countCredit(termGrade) {
   creditObj.requiredCredit = requiredCredit
   creditObj.totalCredit = totalCredit
   return creditObj
+}
+
+/* 获取账单查询的开始和结束日期 */
+function _getQueryDate(add) {
+  /* 现在的时间 */
+  var dateNow = new Date()
+  /* 查询开始的时间 */
+  var dateStart = new Date();
+  dateStart.setMonth(dateNow.getMonth() - add);
+  var yearStart = dateStart.getFullYear() + ""
+  var monthStart = dateStart.getMonth() +1 
+  var dayStart = "01"
+  /* 结束的时间 */
+  var dateEnd = new Date();
+  dateEnd.setMonth(dateNow.getMonth() - add);
+  var yearEnd = dateEnd.getFullYear() + ""
+  var monthEnd = dateEnd.getMonth() + 1
+  var dayEnd = "31"
+  /* 转换位所需格式 */
+  if (monthEnd < 10) monthEnd = "0" + monthEnd
+  else monthEnd = "" + monthEnd
+  if (monthStart < 10) monthStart = "0" + monthStart
+  else monthStart = "" + monthStart
+  var end_date = yearEnd + monthEnd + dayEnd
+  var start_date = yearStart + monthStart + dayStart
+  var dateObj = {}
+  dateObj.start_date = start_date
+  dateObj.end_date = end_date
+  return dateObj
 }
 
 /* -----------------全局函数------------------ */
