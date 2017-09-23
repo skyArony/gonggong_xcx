@@ -14,6 +14,13 @@
       <view class="bottom-line2">卡号:{{ecard_id}}</view>
     </view>
   </view>
+  <view class="month-record" wx:for="{{dataList}}" wx:for-item="budget">
+    <view class="mrecord-header">
+      <view class="mrecord-header-left" wx:if="{{index == 0}}">本月</view>
+      <view class="mrecord-header-left" wx:else>{{item.budget.month}}</view>
+      <view class="mrecord-header-right">充值 {{budget['budget']}} | 支出 {{item.budget.expense}}</view>
+    </view>
+  </view>
   <view class="month-record">
     <view class="mrecord-header">
       <view class="mrecord-header-left">本月</view>
@@ -61,5 +68,8 @@
         <view class="mcitem-right">-0.06</view>
       </view>
     </view>
-  </view>  
+  </view>
+  <view class="loadMore">
+    <view class="loadMore-content">点击加载更多</view>
+  </view>
 </view>

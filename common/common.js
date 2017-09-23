@@ -679,7 +679,7 @@ function getRankInfo(cb) {
 /* -----------------------------for:ecard:start------------------------ */
 /* 获取用户消费信息 */
 function getBilling(add, cb) {
-  var dateObj =  _getQueryDate(add)
+  var dateObj = _getQueryDate(add)
   console.log(dateObj)
   if (app.globalData.loginType == 1) {
     wx.request({
@@ -694,6 +694,10 @@ function getBilling(add, cb) {
       },
       success: function (res) {
         if (res.data.code == 0) {
+          // 通过遍历计算充值和支出
+          var budget = _countBudget(res.data.data)
+          budget.month = dateObj.month
+          res.data.data.budget = budget
           typeof cb == "function" && cb(res.data.data)
         }
       },
@@ -716,6 +720,10 @@ function getBilling(add, cb) {
       success: function (res) {
         console.log(res)
         if (res.data.code == 0) {
+          // 通过遍历计算充值和支出
+          var budget = _countBudget(res.data.data)
+          budget.month = dateObj.month
+          res.data.data.budget = budget
           typeof cb == "function" && cb(res.data.data)
         }
       },
@@ -839,31 +847,39 @@ function _countCredit(termGrade) {
 
 /* 获取账单查询的开始和结束日期 */
 function _getQueryDate(add) {
+  var dateObj = {}
   /* 现在的时间 */
   var dateNow = new Date()
   /* 查询开始的时间 */
   var dateStart = new Date();
   dateStart.setMonth(dateNow.getMonth() - add);
-  var yearStart = dateStart.getFullYear() + ""
-  var monthStart = dateStart.getMonth() +1 
+  var year = dateStart.getFullYear() + ""
+  var month = dateStart.getMonth() + 1
   var dayStart = "01"
-  /* 结束的时间 */
-  var dateEnd = new Date();
-  dateEnd.setMonth(dateNow.getMonth() - add);
-  var yearEnd = dateEnd.getFullYear() + ""
-  var monthEnd = dateEnd.getMonth() + 1
   var dayEnd = "31"
+  dateObj.month = month
   /* 转换位所需格式 */
-  if (monthEnd < 10) monthEnd = "0" + monthEnd
-  else monthEnd = "" + monthEnd
-  if (monthStart < 10) monthStart = "0" + monthStart
-  else monthStart = "" + monthStart
-  var end_date = yearEnd + monthEnd + dayEnd
-  var start_date = yearStart + monthStart + dayStart
-  var dateObj = {}
+  if (month < 10) month = "0" + month
+  else month = "" + month
+  var end_date = year + month + dayEnd
+  var start_date = year + month + dayStart
   dateObj.start_date = start_date
   dateObj.end_date = end_date
   return dateObj
+}
+
+/* 计算每个月的充值和支出 */
+function _countBudget(data) {
+  var expense = 0 // 支出
+  var recharge = 0 // 充值
+  var budget = {}
+  for (var x in data) {
+    if (parseFloat(data[x].amount) > 0) recharge += parseFloat(data[x].amount)
+    else expense += parseFloat(data[x].amount)
+  }
+  budget.expense = Math.abs(expense)
+  budget.recharge = recharge
+  return budget
 }
 
 /* -----------------全局函数------------------ */

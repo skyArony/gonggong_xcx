@@ -14,7 +14,8 @@ Page({
     status: '~', // 校园卡状态
     topData: {}, // 校园卡信息----在页面上部所以取名up
     downData: {}, // 消费信息
-    add: 2, // 所需查询的月数
+    dataList: [], // 存储每个月数据的数组
+    add: 0, // 所需查询的月数
   },
 
   /* 初始化 */
@@ -52,8 +53,11 @@ Page({
     var that = this
     wx.showNavigationBarLoading() // 导航条显示加载
     common.getBilling(that.data.add, function (downData) {
-      console.log(downData)
-      if (downData) that.data.downData = downData
+      if (downData) {
+        that.data.downData = {}
+        that.data.dataList.push(downData)
+        that.data.downData.dataList = that.data.dataList
+      }
       that.endCheck("downData")
     })
   },
@@ -66,6 +70,7 @@ Page({
 
   /* 校园卡信息获取及显示 */
   setDataTop: function () {
+    console.log(this.data.topData)
     if (this.data.topData) {
       this.setData({
         ecard_id: this.data.topData.balance.ecard_id, // 校园卡ID
@@ -78,9 +83,10 @@ Page({
 
   /* 消费信息获取及显示 */
   setDataDown: function () {
+    console.log(this.data.downData)
     if (this.data.downData) {
       this.setData({
-        
+        dataList: this.data.downData.dataList
       })
     }
   },

@@ -49,6 +49,14 @@ page{
   flex-direction: column;
 }
 
+.loadMore {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx;
+  font-size: 30rpx;
+  color: #525252;
+}
+
 .mrecord-header{
   display: flex;
   justify-content: space-between;
