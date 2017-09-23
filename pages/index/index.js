@@ -186,9 +186,9 @@ Page({
         userImg: this.data.indexData.userInfo['img']
       })
     // 设置timer
-    if (this.data.indexData.showTimer)
+    if (this.data.indexData.userInfo.showTimer)
       this.setData({
-        showTimer: this.data.indexData.showTimer
+        showTimer: this.data.indexData.userInfo.showTimer
       })
     // 设置今日课程信息
     if (this.data.indexData.courseInfo)

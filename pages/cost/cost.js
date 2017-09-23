@@ -15,7 +15,8 @@ Page({
     topData: {}, // 校园卡信息----在页面上部所以取名up
     downData: {}, // 消费信息
     dataList: [], // 存储每个月数据的数组
-    add: 0, // 所需查询的月数
+    add: 0, // 所需查询的月数\
+    isEnd: 0,
   },
 
   /* 初始化 */
@@ -65,6 +66,7 @@ Page({
   /* 获取更下一个月的信息 */
   getMoreInfo: function () {
     this.data.add++
+    this.data.isEnd = 1
     this.getDataDown()
   },
 
@@ -156,7 +158,8 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-  
+    this.getDataDown()
+    this.getDataTop()
   },
 
   /**

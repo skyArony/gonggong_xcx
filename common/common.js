@@ -290,7 +290,10 @@ function getLibraryRentList(cb) {
   var libararyUser = app.globalData.libraryInfo.libararyUser
   // 欠费处理
   var debt = libararyUser.debt
-  if (debt > 0) debt = -debt
+  if (debt > 0) {
+    debt = -debt
+    debt = debt.toFixed(2)
+  } 
   else debt = "0.00"
   libararyUser['debt'] = debt
   _getLibraryBook(function (libraryBook) {
@@ -696,9 +699,13 @@ function getBilling(add, cb) {
         if (res.data.code == 0) {
           // 通过遍历计算充值和支出
           var budget = _countBudget(res.data.data)
-          budget.month = dateObj.month
-          res.data.data.budget = budget
-          typeof cb == "function" && cb(res.data.data)
+          var itemInfo = {}
+          itemInfo.data = res.data.data
+          itemInfo.month = dateObj.month
+          itemInfo.year = dateObj.year
+          itemInfo.recharge = budget.recharge
+          itemInfo.expense = budget.expense
+          typeof cb == "function" && cb(itemInfo)
         }
       },
       fail: function (res) {
@@ -722,9 +729,12 @@ function getBilling(add, cb) {
         if (res.data.code == 0) {
           // 通过遍历计算充值和支出
           var budget = _countBudget(res.data.data)
-          budget.month = dateObj.month
-          res.data.data.budget = budget
-          typeof cb == "function" && cb(res.data.data)
+          var itemInfo = {}
+          itemInfo.data = res.data.data
+          itemInfo.month = dateObj.month
+          itemInfo.recharge = budget.recharge
+          itemInfo.expense = budget.expense
+          typeof cb == "function" && cb(itemInfo)
         }
       },
       fail: function (res) {
@@ -840,8 +850,8 @@ function _countCredit(termGrade) {
     totalCredit += parseFloat(termGrade[x]['credit'])
   }
   var creditObj = {}
-  creditObj.requiredCredit = requiredCredit
-  creditObj.totalCredit = totalCredit
+  creditObj.requiredCredit = requiredCredit.toFixed(1)
+  creditObj.totalCredit = totalCredit.toFixed(1)
   return creditObj
 }
 
@@ -858,6 +868,7 @@ function _getQueryDate(add) {
   var dayStart = "01"
   var dayEnd = "31"
   dateObj.month = month
+  dateObj.year = year
   /* 转换位所需格式 */
   if (month < 10) month = "0" + month
   else month = "" + month
@@ -877,8 +888,8 @@ function _countBudget(data) {
     if (parseFloat(data[x].amount) > 0) recharge += parseFloat(data[x].amount)
     else expense += parseFloat(data[x].amount)
   }
-  budget.expense = Math.abs(expense)
-  budget.recharge = recharge
+  budget.expense = Math.abs(expense).toFixed(2)
+  budget.recharge = recharge.toFixed(2)
   return budget
 }
 

@@ -52,7 +52,7 @@ page{
 .loadMore {
   display: flex;
   justify-content: center;
-  padding: 20rpx;
+  padding: 30rpx;
   font-size: 30rpx;
   color: #525252;
 }
