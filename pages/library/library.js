@@ -15,6 +15,7 @@ Page({
     debet: "0.00", //图书馆欠费
     validityTime: "0000-00-00", // 图书借阅有效期限
     rentList: null, // 图书借阅详情
+    oldData: {}, // 上一次的数据
   },
 
   /**
@@ -80,11 +81,14 @@ Page({
   /* 获取本页图书借阅信息 */
   getLibraryInfo: function () {
     var that = this
+    this.data.oldData = this.data.libraryData
     wx.showNavigationBarLoading() // 导航条显示加载
     // 获取图书馆信息并设置到视图层
     common.getLibrary(function (libraryInfo) {
       common.getLibraryRentList(function (libraryInfo) {
-        if (libraryInfo) that.data.libraryData = libraryInfo
+        if (libraryInfo.libararyUser) that.data.libraryData = libraryInfo
+        else if (that.data.oldData) that.data.libraryData = that.data.oldData
+        else that.data.libraryData = {}
         that.endCheck("图书馆信息加载完毕")
       })
     })
@@ -102,6 +106,10 @@ Page({
         debet: this.data.libraryData.libararyUser['debt'], //图书馆欠费
         validityTime: this.data.libraryData.libararyUser['valid_date_end'], // 图书借阅有效期限
         rentList: this.data.libraryData.libraryBook // 设置借阅图书表
+      })
+    } else {
+      this.setData({
+        bookNum: "故障", // 借阅的书籍数目
       })
     }
   },

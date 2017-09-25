@@ -137,7 +137,8 @@ Page({
       common.getTimerInfo(function (userInfo) {
         console.log(userInfo)
         if (userInfo) that.data.indexData.userInfo = userInfo
-        else that.data.indexData.userInfo = that.data.oldData.userInfo
+        else if (that.data.oldData.userInfo) that.data.indexData.userInfo = that.data.oldData.userInfo
+        else that.data.indexData.userInfo = null
         that.endCheck("个人信息加载完毕，")
       })
     })
@@ -146,15 +147,17 @@ Page({
       console.log(courseInfo)
       console.log(that.data.oldData)
       if (courseInfo) that.data.indexData.courseInfo = courseInfo
-      else that.data.indexData.courseInfo = that.data.oldData.courseInfo
+      else if (that.data.oldData.courseInfo) that.data.indexData.courseInfo = that.data.oldData.courseInfo
+      else that.data.indexData.courseInfo = null
       that.endCheck("课程信息加载完毕，")
     })
     // 获取图书馆信息并设置到视图层
     common.getLibrary(function (libraryInfo) {
       common.getLibraryRentList(function (libraryInfo) {
         console.log(libraryInfo)
-        if (libraryInfo) that.data.indexData.libraryInfo = libraryInfo
-        else that.data.indexData.libraryInfo = that.data.oldData.libraryInfo
+        if (libraryInfo.libararyUser)  that.data.indexData.libraryInfo = libraryInfo
+        else if (that.data.oldData.libraryInfo) that.data.indexData.libraryInfo = that.data.oldData.libraryInfo
+        else that.data.indexData.libraryInfo = null
         that.endCheck("图书馆信息加载完毕，")
       })
     })
@@ -162,14 +165,16 @@ Page({
     common.getEcard(function (eCardInfo) {
       console.log(eCardInfo)
       if (eCardInfo) that.data.indexData.eCardInfo = eCardInfo
-      else that.data.indexData.eCardInfo = that.data.oldData.eCardInfo
+      else if (that.data.oldData.eCardInfo) that.data.indexData.eCardInfo = that.data.oldData.eCardInfo
+      else that.data.indexData.eCardInfo = null
       that.endCheck("一卡通信息加载完毕，")
     })
     // 获取校园余额并设置到视图层
     common.getNetInfo(function (netInfo) {
       console.log(netInfo)
       if (netInfo) that.data.indexData.netInfo = netInfo
-      else that.data.indexData.netInfo = that.data.oldData.netInfo
+      else if (that.data.oldData.netInfo) that.data.indexData.netInfo = that.data.oldData.netInfo
+      else that.data.indexData.netInfo = null
       that.endCheck("校园网信息加载完毕，")
     })
   },
@@ -180,6 +185,7 @@ Page({
     console.log("以下是获取到的个人信息")
     console.log(this.data.indexData)
     wx.stopPullDownRefresh() // 停止下拉状态
+    app.globalData.userInfo = this.data.indexData.userInfo
     // if判断可以防止数据为空时的报错，且在数据接口出问题是仍然采用旧数据
     if (this.data.indexData.userInfo)
       this.setData({

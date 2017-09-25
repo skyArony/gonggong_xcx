@@ -24,6 +24,8 @@ function getUserInfo(cb) {
           else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
           if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
           typeof cb == "function" && cb(res.data.data)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -61,11 +63,12 @@ function getUserInfo(cb) {
             success: function (res) {
               if (res.data.code == 0) {
                 app.globalData.userInfo = res.data.data
-                app.globalData.userInfo = res.data.data
                 if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
                 else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
                 if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
                 typeof cb == "function" && cb(res.data.data)
+              } else {
+                typeof cb == "function" && cb(null)
               }
             },
             fail: function (res) {
@@ -73,6 +76,8 @@ function getUserInfo(cb) {
               typeof cb == "function" && cb(null)
             }
           })
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -142,6 +147,8 @@ function _handleTimer(cb) {
       app.globalData.isEnd++
       if (res.data.code == 0) {
         typeof cb == "function" && cb(res.data.data)
+      } else {
+        typeof cb == "function" && cb(null)
       }
     },
     fail: function (res) {
@@ -202,42 +209,40 @@ function getCourse(cb) {
 
 /* 服务于getCourse的复用函数————获取今日课程 */
 function _getTodayCorse(res) {
-  if (res.data.code == 0) {
-    app.globalData.courseInfo = res.data.data
-    // 时令表
-    var winter_start = ["8:00", "8:55", "10:10", "11:05", "14:00", "14:55", "16:10", "17:05", "19:00", "19:55", "20:50"]
-    var winter_end = ["8:45", "9:40", "10:55", "11:50", "14:45", "15:40", "16:55", "17:50", "19:45", "20:40", "21:35"]
-    var summer_start = ["8:00", "8:55", "10:10", "11:05", "14:30", "15:25", "16:40", "17:35", "19:30", "20:25", "21:20"]
-    var summer_end = ["8:45", "9:40", "10:55", "11:50", "15:15", "16:10", "17:25", "18:20", "19:15", "21:10", "22:05"]
-    // 今日课程信息
-    var courseInfo = res.data.data
-    var todayCourseNum = 0
-    var todayCourseDetail = new Array()
-    var week = new Date().getDay() // 星期
-    var month = new Date().getMonth() // 月份
-    for (var tCourse in courseInfo[week]) {
-      for (var course in courseInfo[week][tCourse]) {
-        var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
-        if (inArray(weekArray, app.globalData.currentWeek)) {
-          todayCourseNum++
-          if (month == 5 || month == 6 || month == 7 || month == 8 || month == 9) {
-            courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] - 1]
-            courseInfo[week][tCourse][course]['end_time'] = summer_end[courseInfo[week][tCourse][course]['section_end'] - 1]
-          } else {
-            courseInfo[week][tCourse][course]['start_time'] = winter_start[courseInfo[week][tCourse][course]['section_start'] - 1]
-            courseInfo[week][tCourse][course]['end_time'] = winter_end[courseInfo[week][tCourse][course]['section_end'] - 1]
-          }
-          todayCourseDetail.push(courseInfo[week][tCourse][course])
+  app.globalData.courseInfo = res.data.data
+  // 时令表
+  var winter_start = ["8:00", "8:55", "10:10", "11:05", "14:00", "14:55", "16:10", "17:05", "19:00", "19:55", "20:50"]
+  var winter_end = ["8:45", "9:40", "10:55", "11:50", "14:45", "15:40", "16:55", "17:50", "19:45", "20:40", "21:35"]
+  var summer_start = ["8:00", "8:55", "10:10", "11:05", "14:30", "15:25", "16:40", "17:35", "19:30", "20:25", "21:20"]
+  var summer_end = ["8:45", "9:40", "10:55", "11:50", "15:15", "16:10", "17:25", "18:20", "19:15", "21:10", "22:05"]
+  // 今日课程信息
+  var courseInfo = res.data.data
+  var todayCourseNum = 0
+  var todayCourseDetail = new Array()
+  var week = new Date().getDay() // 星期
+  var month = new Date().getMonth() // 月份
+  for (var tCourse in courseInfo[week]) {
+    for (var course in courseInfo[week][tCourse]) {
+      var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
+      if (inArray(weekArray, app.globalData.currentWeek)) {
+        todayCourseNum++
+        if (month == 5 || month == 6 || month == 7 || month == 8 || month == 9) {
+          courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] - 1]
+          courseInfo[week][tCourse][course]['end_time'] = summer_end[courseInfo[week][tCourse][course]['section_end'] - 1]
+        } else {
+          courseInfo[week][tCourse][course]['start_time'] = winter_start[courseInfo[week][tCourse][course]['section_start'] - 1]
+          courseInfo[week][tCourse][course]['end_time'] = winter_end[courseInfo[week][tCourse][course]['section_end'] - 1]
         }
+        todayCourseDetail.push(courseInfo[week][tCourse][course])
       }
     }
-    var todayCourse = {}
-    todayCourse.todayCourseNum = todayCourseNum
-    todayCourse.todayCourseDetail = todayCourseDetail
-    if (todayCourseNum == 0) todayCourse.status = 3
-    else todayCourse.status = 2
-    return todayCourse
   }
+  var todayCourse = {}
+  todayCourse.todayCourseNum = todayCourseNum
+  todayCourse.todayCourseDetail = todayCourseDetail
+  if (todayCourseNum == 0) todayCourse.status = 3
+  else todayCourse.status = 2
+  return todayCourse
 }
 
 /* 获取图书馆读者信息 */
@@ -256,6 +261,8 @@ function getLibrary(cb) {
         if (res.data.code == 0) {
           app.globalData.libraryInfo.libararyUser = res.data.data
           typeof cb == "function" && cb(res.data.data)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -277,6 +284,8 @@ function getLibrary(cb) {
         if (res.data.code == 0) {
           app.globalData.libraryInfo.libararyUser = res.data.data
           typeof cb == "function" && cb(res.data.data)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -291,14 +300,18 @@ function getLibrary(cb) {
 function getLibraryRentList(cb) {
   var libraryInfo = {}
   var libararyUser = app.globalData.libraryInfo.libararyUser
-  // 欠费处理
-  var debt = libararyUser.debt
-  if (debt > 0) {
-    debt = -debt
-    debt = debt.toFixed(2)
-  } 
-  else debt = "0.00"
-  libararyUser['debt'] = debt
+  if (libararyUser) {
+    // 欠费处理
+    var debt = libararyUser.debt
+    if (debt > 0) {
+      debt = -debt
+      debt = debt.toFixed(2)
+    }
+    else debt = "0.00"
+    libararyUser['debt'] = debt
+  } else {
+    libararyUser = null
+  }
   _getLibraryBook(function (libraryBook) {
     libraryInfo.libararyUser = libararyUser
     libraryInfo.libraryBook = libraryBook
@@ -333,6 +346,8 @@ function _getLibraryBook(cb) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(res.data.data)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -353,6 +368,8 @@ function _getLibraryBook(cb) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(res.data.data)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -379,6 +396,8 @@ function getEcard(cb) {
         if (res.data.code == 0) {
           app.globalData.ecardInfo['balance'] = res.data.data
           typeof cb == "function" && cb(app.globalData.ecardInfo)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -400,6 +419,8 @@ function getEcard(cb) {
         if (res.data.code == 0) {
           app.globalData.ecardInfo['balance'] = res.data.data
           typeof cb == "function" && cb(app.globalData.ecardInfo)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -423,7 +444,9 @@ function getNetInfo(cb) {
   //     app.globalData.isEnd++
   //     if (res.data.code == 0) {
   //       typeof cb == "function" && cb(res.data.data)
-  //     }
+  //     }else {
+  //  typeof cb == "function" && cb(null)
+  // }
   //   },
   //   fail: function (res) {
   //     app.globalData.isEnd++
@@ -545,6 +568,8 @@ function _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj) {
           console.log(x + "的绩点排名获取失败___验证码错误")
           termcode++
           _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -578,6 +603,8 @@ function _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj) {
           console.log(x + "的绩点排名获取失败___验证码错误")
           termcode++
           _getAllRankWhenFail(cb, termcode, x, gradeData, creditObj)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -607,6 +634,8 @@ function _getAllGrade(cb) {
           typeof cb == "function" && cb(res.data.data)
         } else if (res.data.code == 5) {
           _getAllGrade(cb)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       }
     })
@@ -625,6 +654,8 @@ function _getAllGrade(cb) {
           typeof cb == "function" && cb(res.data.data)
         } else if (res.data.code == 5) {
           _getAllGrade(cb)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       }
     })
@@ -650,6 +681,8 @@ function getRankInfo(cb) {
           typeof cb == "function" && cb(res.data.data)
         } else if (res.data.code == 5) {
           getRankInfo(cb)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -671,6 +704,8 @@ function getRankInfo(cb) {
           typeof cb == "function" && cb(res.data.data)
         } else if (res.data.code == 5) {
           getRankInfo(cb)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -709,6 +744,8 @@ function getBilling(add, cb) {
           itemInfo.recharge = budget.recharge
           itemInfo.expense = budget.expense
           typeof cb == "function" && cb(itemInfo)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -738,6 +775,8 @@ function getBilling(add, cb) {
           itemInfo.recharge = budget.recharge
           itemInfo.expense = budget.expense
           typeof cb == "function" && cb(itemInfo)
+        } else {
+          typeof cb == "function" && cb(null)
         }
       },
       fail: function (res) {
@@ -749,6 +788,68 @@ function getBilling(add, cb) {
 }
 
 /* -----------------------------for:ecard:end------------------------ */
+
+/* -----------------------------for:course:start------------------------ */
+/* 获取课表页的用户课表信息 */
+function getCompleteCourse(cb) {
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.EDU_COURSE,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw,
+        style: 2
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          typeof cb == "function" && cb(_mergeCorse(res))
+        } else {
+          typeof cb == "function" && cb(null)
+        }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
+      }
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.EDU_COURSE_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw,
+        style: 2
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          typeof cb == "function" && cb(_mergeCorse(res))
+        } else {
+          typeof cb == "function" && cb(null)
+        }
+      },
+      fail: function (res) {
+        app.globalData.isEnd++
+        typeof cb == "function" && cb(null)
+      }
+    })
+  }
+}
+
+/* 合并学校课表和学生自主添加的课表 */
+function _mergeCorse(res) {
+  var officalCourse = res.data.data
+  var userCourse = app.globalData.userInfo.course
+  console.log(officalCourse)
+  console.log(userCourse)
+  return 1
+}
+
+
+/* -----------------------------for:course:end------------------------ */
 
 /* ----------------------------------------tools------------------------------------- */
 
@@ -907,6 +1008,7 @@ module.exports.getNetInfo = getNetInfo
 module.exports.getGradeInfo = getGradeInfo
 module.exports.getRankInfo = getRankInfo
 module.exports.getBilling = getBilling
+module.exports.getCompleteCourse = getCompleteCourse
 module.exports.getRankInfo
 
 /* ---------------------tools--------------------- */
