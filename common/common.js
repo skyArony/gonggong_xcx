@@ -20,6 +20,9 @@ function getUserInfo(cb) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
+          if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
+          else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
+          if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
           typeof cb == "function" && cb(res.data.data)
         }
       },
