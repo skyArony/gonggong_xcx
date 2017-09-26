@@ -800,7 +800,6 @@ function getCompleteCourse(cb) {
         hash: app.globalData.app_ID,
         sid: app.globalData.sid,
         password: app.globalData.portalpw,
-        style: 2
       },
       success: function (res) {
         if (res.data.code == 0) {
@@ -822,7 +821,6 @@ function getCompleteCourse(cb) {
         hash: app.globalData.app_ID,
         sid: app.globalData.sid,
         password: app.globalData.portalpw,
-        style: 2
       },
       success: function (res) {
         if (res.data.code == 0) {
