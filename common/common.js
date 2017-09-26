@@ -105,7 +105,7 @@ function getTimerInfo(cb) {
         availableTimer.push(officalTimer[y])
       }
     }
-    availableTimer.sort(by('start_date', by('start_time')));
+    availableTimer.sort(_by('start_date', _by('start_time')));
     // 数据再处理\计算出天数
     var tempTimer = new Array()
     for (var z in availableTimer) {
@@ -224,7 +224,7 @@ function _getTodayCorse(res) {
   for (var tCourse in courseInfo[week]) {
     for (var course in courseInfo[week][tCourse]) {
       var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
-      if (inArray(weekArray, app.globalData.currentWeek)) {
+      if (_inArray(weekArray, app.globalData.currentWeek)) {
         todayCourseNum++
         if (month == 5 || month == 6 || month == 7 || month == 8 || month == 9) {
           courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] - 1]
@@ -843,23 +843,31 @@ function getCompleteCourse(cb) {
 function _mergeCorse(res) {
   var officalCourse = res.data.data
   var userCourse = JSON.parse(app.globalData.userInfo.course)
-  /* 先要将官方课表中的课提取到上一层 */
-  /* 合并用户课表 */
-  /* 课表排序 */
-  var allCourse = {}
-  var x = 7
-  while (x > 0) {
-    if (officalCourse[x] && userCourse[x]) allCourse[x] = officalCourse[x].concat(userCourse[x])
-    else if (officalCourse[x] && !userCourse[x]) allCourse[x] = officalCourse[x]
-    else if (!officalCourse[x] && userCourse[x]) allCourse[x] = userCourse[x]
-    else if (!officalCourse[x] && !userCourse[x]) allCourse[x] = null
-    x--
-  }
-  for (var y in allCourse) {
-    by('start_date', by('start_time'))
-  } 
-  console.log("allCourse")
-  console.log(allCourse)
+  console.log(userCourse)
+  console.log(officalCourse)
+  // 将官方课表中的课提取到上一层
+  // var newOfficalCourse = {}
+  // for (var x in officalCourse) {
+  //   newOfficalCourse[x] = []
+  //   if (officalCourse[x]) {
+  //     for (var y in officalCourse[x]) {
+  //       for (var z in officalCourse[x][y]) {
+  //         newOfficalCourse[x].push(officalCourse[x][y][z])
+  //       }
+  //     }
+  //   }
+  // }
+  // // 课表合并
+  // var allCourse = {}
+  // var u = 7
+  // while (u > 0) {
+  //   if (newOfficalCourse[u] && userCourse[u]) allCourse[u] = newOfficalCourse[u].concat(userCourse[u])
+  //   else if (newOfficalCourse[u] && !userCourse[u]) allCourse[u] = newOfficalCourse[u]
+  //   else if (!newOfficalCourse[u] && userCourse[u]) allCourse[u] = userCourse[u]
+  //   else if (!newOfficalCourse[u] && !userCourse[u]) allCourse[u] = null
+  //   u--
+  // }
+  // return allCourses
 }
 
 
@@ -878,7 +886,7 @@ function getCurrentWeek() {
 }
 
 /* 检查数组中是否存在某元素 */
-function inArray(arrayToSearch, stringToSearch) {
+function _inArray(arrayToSearch, stringToSearch) {
   for (var s = 0; s < arrayToSearch.length; s++) {
     var thisEntry = arrayToSearch[s].toString();
     if (thisEntry == stringToSearch) {
@@ -889,7 +897,7 @@ function inArray(arrayToSearch, stringToSearch) {
 }
 
 /* 数组按元素进行排序_第一个参数相同是可按第二个参数排序 */
-function by(name, minor) {
+function _by(name, minor) {
   return function (o, p) {
     var a, b;
     if (o && p && typeof o === 'object' && typeof p === 'object') {
@@ -1011,6 +1019,28 @@ function _countBudget(data) {
   return budget
 }
 
+/* 返回指定周数的课表 */
+function getWeekCourse(week, courseData) {
+  var showCoure = {}
+  for (var x in courseData) {
+    showCoure[x] = []
+    for (var y in courseData[x]) {
+      var weekArray = courseData[x][y]['week'].split(',')
+      if (_inArray(weekArray, week)) {
+        courseData[x][y]["isOk"] = 1
+      } else {
+        courseData[x][y]["isOk"] = 0
+      }
+      showCoure[x].push(courseData[x][y])
+    }
+  }
+  var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
+  if (_inArray(weekArray, app.globalData.week)) {
+
+  }
+
+}
+
 /* -----------------全局函数------------------ */
 module.exports.getUserInfo = getUserInfo
 module.exports.getTimerInfo = getTimerInfo
@@ -1029,5 +1059,5 @@ module.exports.getRankInfo
 module.exports.getCurrentWeek = getCurrentWeek
 module.exports.getOtherPw = getOtherPw
 module.exports.getOpenId = getOpenId
-module.exports.inArray
-module.exports.by
+module.exports._inArray
+module.exports._by
