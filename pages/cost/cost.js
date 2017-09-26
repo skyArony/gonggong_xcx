@@ -24,12 +24,12 @@ Page({
     this.data.topData = wx.getStorageSync('topData')
     this.data.downData  = wx.getStorageSync('downData')
     app.globalData.loginType = wx.getStorageSync('loginType')
-    if (this.data.topData && (new Date().getTime() - this.data.topData.refreshTime) < /* 7200000 */ 3) {
+    if (this.data.topData && (new Date().getTime() - this.data.topData.refreshTime) < 7200000) {
       this.setDataDown()
     } else {
       this.getDataDown()
     }
-    if (this.data.downData && (new Date().getTime() - this.data.downData.refreshTime) < /* 7200000 */ 3) {
+    if (this.data.downData && (new Date().getTime() - this.data.downData.refreshTime) < 7200000) {
       this.setDataTop()
     } else {
       this.getDataTop()

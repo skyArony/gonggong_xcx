@@ -842,10 +842,24 @@ function getCompleteCourse(cb) {
 /* 合并学校课表和学生自主添加的课表 */
 function _mergeCorse(res) {
   var officalCourse = res.data.data
-  var userCourse = app.globalData.userInfo.course
-  console.log(officalCourse)
-  console.log(userCourse)
-  return 1
+  var userCourse = JSON.parse(app.globalData.userInfo.course)
+  /* 先要将官方课表中的课提取到上一层 */
+  /* 合并用户课表 */
+  /* 课表排序 */
+  var allCourse = {}
+  var x = 7
+  while (x > 0) {
+    if (officalCourse[x] && userCourse[x]) allCourse[x] = officalCourse[x].concat(userCourse[x])
+    else if (officalCourse[x] && !userCourse[x]) allCourse[x] = officalCourse[x]
+    else if (!officalCourse[x] && userCourse[x]) allCourse[x] = userCourse[x]
+    else if (!officalCourse[x] && !userCourse[x]) allCourse[x] = null
+    x--
+  }
+  for (var y in allCourse) {
+    by('start_date', by('start_time'))
+  } 
+  console.log("allCourse")
+  console.log(allCourse)
 }
 
 
@@ -874,7 +888,7 @@ function inArray(arrayToSearch, stringToSearch) {
   return false;
 }
 
-/* 数组按元素进行排序 */
+/* 数组按元素进行排序_第一个参数相同是可按第二个参数排序 */
 function by(name, minor) {
   return function (o, p) {
     var a, b;
