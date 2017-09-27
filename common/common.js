@@ -791,7 +791,7 @@ function getBilling(add, cb) {
 
 /* -----------------------------for:course:start------------------------ */
 /* 获取课表页的用户课表信息 */
-function getCompleteCourse(cb) {
+function getCompleteCourse(week, cb) {
   if (app.globalData.loginType == 1) {
     wx.request({
       url: app.globalData.EDU_COURSE,
@@ -803,7 +803,7 @@ function getCompleteCourse(cb) {
       },
       success: function (res) {
         if (res.data.code == 0) {
-          typeof cb == "function" && cb(_mergeCorse(res))
+          typeof cb == "function" && cb(getWeekCourse(week, res))
         } else {
           typeof cb == "function" && cb(null)
         }
@@ -824,7 +824,7 @@ function getCompleteCourse(cb) {
       },
       success: function (res) {
         if (res.data.code == 0) {
-          typeof cb == "function" && cb(_mergeCorse(res))
+          typeof cb == "function" && cb(getWeekCourse(week, res))
         } else {
           typeof cb == "function" && cb(null)
         }
@@ -837,35 +837,118 @@ function getCompleteCourse(cb) {
   }
 }
 
-/* 合并学校课表和学生自主添加的课表 */
-function _mergeCorse(res) {
+/* 返回指定周数的课表 */
+function getWeekCourse(week, res) {
   var officalCourse = res.data.data
   var userCourse = JSON.parse(app.globalData.userInfo.course)
-  console.log(userCourse)
-  console.log(officalCourse)
-  // 将官方课表中的课提取到上一层
-  // var newOfficalCourse = {}
-  // for (var x in officalCourse) {
-  //   newOfficalCourse[x] = []
-  //   if (officalCourse[x]) {
-  //     for (var y in officalCourse[x]) {
-  //       for (var z in officalCourse[x][y]) {
-  //         newOfficalCourse[x].push(officalCourse[x][y][z])
-  //       }
-  //     }
-  //   }
-  // }
-  // // 课表合并
-  // var allCourse = {}
-  // var u = 7
-  // while (u > 0) {
-  //   if (newOfficalCourse[u] && userCourse[u]) allCourse[u] = newOfficalCourse[u].concat(userCourse[u])
-  //   else if (newOfficalCourse[u] && !userCourse[u]) allCourse[u] = newOfficalCourse[u]
-  //   else if (!newOfficalCourse[u] && userCourse[u]) allCourse[u] = userCourse[u]
-  //   else if (!newOfficalCourse[u] && !userCourse[u]) allCourse[u] = null
-  //   u--
-  // }
-  // return allCourses
+  // 将学校课程分到11个课程格子
+  var newOfficalCourse = {}
+  var x = 7
+  while (x > 0) {
+    newOfficalCourse[x] = []
+    newOfficalCourse[x][11] = null
+    // 如果今天有课,下一步处理
+    if (officalCourse[x]) {
+      var y = 5
+      while (y > 0) {
+        if (officalCourse[x][y]) {
+          if (officalCourse[x][y].length > 1) {
+            var suitableCourse = getSuitableCourse(week, officalCourse[x][y])
+            var suitableCourse = suitableCourse.course
+            var z = suitableCourse.section_length - 1
+            while (z >= 0) {
+              newOfficalCourse[x][parseInt(suitableCourse.section_start) + z] = suitableCourse
+              z--
+            }
+          } else {
+            var z = officalCourse[x][y][0].section_length - 1
+            while (z >= 0) {
+              newOfficalCourse[x][parseInt(officalCourse[x][y][0].section_start) + z] = officalCourse[x][y][0]
+              z--
+            }
+          }
+        } else {
+          newOfficalCourse[x][y * 2 - 1] = null
+          newOfficalCourse[x][y * 2] = null
+        }
+        y--
+      }
+    } else {
+      // 如果今天无课,全部置为null
+      var y = 11
+      while (y > 0) {
+        newOfficalCourse[x][y] = null
+        y--
+      }
+    }
+    x--
+  }
+  // 将个人课程分到11个课程格子
+  var newUserCourse = {}
+  var u = 7
+  while (u > 0) {
+    newUserCourse[u] = []
+    if (userCourse[u]) {
+      for (var v in userCourse[u]) {
+        var end = userCourse[u][v]["section_end"]
+        var start = userCourse[u][v]["section_start"]
+        while(start <= end) {
+          if (newUserCourse[u][start]) {
+            var courseArray = []
+            courseArray.push(newUserCourse[u][start])
+            courseArray.push(userCourse[u][v])
+            var suitableCourse = getSuitableCourse(week, courseArray)
+            newUserCourse[u][start] = suitableCourse.course
+          } else {
+            newUserCourse[u][start] = userCourse[u][v]
+          }
+          start++
+        }
+      }
+    }
+    u--
+  }
+  // 将官方课和个人课表结合
+  var combineCourse = {}
+  var a = 7
+  while (a > 0) {
+    combineCourse[a] = []
+    if (newUserCourse[a]) {
+      for (var b in newOfficalCourse[a]) {
+        if (newOfficalCourse[a][b] && newUserCourse[a][b]) {
+          var courseArray = []
+          courseArray.push(newUserCourse[a][b])
+          courseArray.push(newOfficalCourse[a][b])
+          var suitableCourse = getSuitableCourse(week, courseArray)
+          combineCourse[a][b] = suitableCourse.course
+        } else if (!newOfficalCourse[a][b] && newUserCourse[a][b]) {
+          combineCourse[a][b] = newUserCourse[a][b]
+        } else if (newOfficalCourse[a][b] && !newUserCourse[a][b]) {
+          combineCourse[a][b] = newOfficalCourse[a][b]
+        } else if (!newOfficalCourse[a][b] && !newUserCourse[a][b]) {
+          combineCourse[a][b] = null
+        }
+      }
+      
+    } else {
+      combineCourse[a] = newOfficalCourse[a]
+    }
+    a--
+  }
+  // 每门超过一节课时间的课保留第一个,去掉后面的
+  for (var t in combineCourse) {
+    for (var g in combineCourse[t]) {
+      if (combineCourse[t][g]) {
+        var z = combineCourse[t][g].section_length - 1
+        while (z > 0) {
+          combineCourse[t][g + z] = null
+          z--
+        }
+      }
+    }
+  }
+  console.log(combineCourse)
+  // return showCoure
 }
 
 
@@ -1017,27 +1100,54 @@ function _countBudget(data) {
   return budget
 }
 
-/* 返回指定周数的课表 */
-function getWeekCourse(week, courseData) {
-  var showCoure = {}
-  for (var x in courseData) {
-    showCoure[x] = []
-    for (var y in courseData[x]) {
-      var weekArray = courseData[x][y]['week'].split(',')
-      if (_inArray(weekArray, week)) {
-        courseData[x][y]["isOk"] = 1
-      } else {
-        courseData[x][y]["isOk"] = 0
+/* 从一个课表数组中选出最适合当前周的课 */
+function getSuitableCourse(week, courseArray) {
+  var isOk = []
+  var isNo = []
+  var res = {}
+  for (var x in courseArray) {
+    var weekArray = courseArray[x]['week'].split(',')
+    if (_inArray(weekArray, week)) isOk.push(courseArray[x])
+    else isNo.push(courseArray[x])
+  }
+  if (isOk.length > 1) {
+    res.status = "2" // 状态2表示课表冲突
+    res.course = isOk[0]
+    return res
+  }
+  if (isOk.length == 1) {
+    res.status = "1" // 状态1表示刚刚好
+    res.course = isOk[0]
+    return res
+  }
+  if (isOk.length == 0) {
+    var count = week
+    while (count <= 20) {
+      count++
+      for (var x in isOk) {
+        var weekArray = isOk[x]['week'].split(',')
+        if (_inArray(weekArray, count)) {
+          res.status = "0" // 状态0表示从多个过期的课程中选出了最合适的
+          res.course = isOk[x]
+          return res
+        }
       }
-      showCoure[x].push(courseData[x][y])
+    }
+    var count = week
+    while (count >= 1) {
+      count--
+      for (var y in isOk) {
+        var weekArray = isOk[y]['week'].split(',')
+        if (_inArray(weekArray, count)) {
+          res.status = "0" // 状态0表示从多个过期的课程中选出了最合适的
+          res.course = isOk[y]
+          return res
+        }
+      }
     }
   }
-  var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
-  if (_inArray(weekArray, app.globalData.week)) {
-
-  }
-
 }
+
 
 /* -----------------全局函数------------------ */
 module.exports.getUserInfo = getUserInfo

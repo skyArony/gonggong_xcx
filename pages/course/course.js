@@ -15,7 +15,7 @@ Page({
   /* 初始化 */
   init: function () {
     app.globalData.loginType = wx.getStorageSync('loginType')
-    common.getCompleteCourse(function (res) {
+    common.getCompleteCourse(app.globalData.currentWeek, function (res) {
       console.log(res)
     })
   },
