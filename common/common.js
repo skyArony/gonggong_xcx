@@ -939,16 +939,20 @@ function getWeekCourse(week, res) {
   for (var t in combineCourse) {
     for (var g in combineCourse[t]) {
       if (combineCourse[t][g]) {
-        var z = combineCourse[t][g].section_length - 1
+        var z = combineCourse[t][g].section_end - combineCourse[t][g].section_start
         while (z > 0) {
-          combineCourse[t][g + z] = null
+          combineCourse[t][parseInt(g) + z] = null
           z--
         }
       }
     }
   }
+  // 去除第一个元素,以让0号元素表示第一节课
+  for(var h in combineCourse) {
+    combineCourse[h].shift();
+  }
   console.log(combineCourse)
-  // return showCoure
+  return combineCourse
 }
 
 
@@ -1068,7 +1072,7 @@ function _getQueryDate(add) {
   /* 现在的时间 */
   var dateNow = new Date()
   /* 查询开始的时间 */
-  var dateStart = new Date();
+  var dateStart = new Date()
   dateStart.setMonth(dateNow.getMonth() - add);
   var year = dateStart.getFullYear() + ""
   var month = dateStart.getMonth() + 1
