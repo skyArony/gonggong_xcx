@@ -16,6 +16,7 @@ App({
     libraryInfo: {}, // 图书馆信息
     courseInfo: null, // 课程信息
     ecardInfo: {}, // e卡通信息
+    officeCourse: null, // 官方课表数据
     availableTimer: null, // 当前有效的Timer
     currentWeek: null, // 当前周数
     isEnd: 0, // 数据加载的结束判断，用来检验页面数据是否加载完成
@@ -30,7 +31,7 @@ App({
     LOGIN: "https://api.sky31.com/PortalCode/GongGong/login.php",
 
     SET_LIBRARY_PASSWORD: "https://api.sky31.com/PortalCode/GongGong/set_library_password.php",
-    SET_LIBRARY_PHONE: "https://api.sky31.com/PortalCode/GongGong/set_phone.php",
+    SET_PHONE: "https://api.sky31.com/PortalCode/GongGong/set_phone.php",
     BIND_SID: "https://wechat.sky31.com/xcx/gonggong/bindSid.php",
 
     EDU_COURSE: "https://api.sky31.com/PortalCode/edu-new/course.php",
@@ -65,5 +66,19 @@ App({
     LIBRARY_RENT_LIST_OLD: "https://api.sky31.com/library/rent_list.php", 
     ECARD_BALANCE_OLD: "https://api.sky31.com/ecard/balance.php",
     ECARD_BILLING_OLD: "https://api.sky31.com/ecard/billing.php",
+    SET_ECARD_PASSWORD_OLD: "https://passport.sky31.com/api-s/set_ecard_password.php",
+    SET_LIBRARY_PASSWORD_OLD: "https://passport.sky31.com/api-s/set_library_password.php",
+    SET_PHONE_OLD: "https://passport.sky31.com/api-s/set_phone.php",
+    ENABLE_LIBRARY_SMS_NOTICE_OLD: "https://passport.sky31.com/api-s/enable_library_sms_notice.php",
+    DISABLE_LIBRARY_SMS_NOTICE_OLD: "https://passport.sky31.com/api-s/disable_library_sms_notice.php",
+    GET_LIBRARY_SMS_NOTICE_STATUS_OLD: "https://passport.sky31.com/api-s/get_library_sms_notice_status.php",
+
+
+    /* -------------------------------------------颜色配置----------------------------------- */
+    /* 课程表格子 */
+    COURSE_BLOCK: ["#F2C973", "#83D3D4", "#98D362", "#EB9FA1", "#74C0AD", "#E097B5", "#60C0E6", "#F3AB8B", "#93B8D7", "#79D4A3", "#BEA49D"],
+    /* -------------------------------------------版本信息----------------------------------- */
+    VERSION: "V0.0.0.20171011_Alpha",
+    VERSION_INFO: "内部抢先版,bug众多,请一一反馈-.-"
   }
 })

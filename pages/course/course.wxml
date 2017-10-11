@@ -5,7 +5,7 @@
 <!--holder为占位块，为了实现flex布局的效果  -->
   <view class="holder"></view>
   <view class="week">
-    <picker bindchange="bindPickerChange" value="{{selectWeek}}" range="{{weekList}}">
+    <picker bindchange="selectWeek" value="{{selectWeek}}" range="{{weekList}}">
       <view class="picker big">
         {{weekList[selectWeek]}}
       </view>
@@ -68,46 +68,12 @@
       <view class="num-dark ccenter">10</view>
       <view class="num-light ccenter">11</view>
     </view>
+    <!--9.1%为一个格子的高度  -->
     <view class="course" wx:for="{{courseData}}" wx:for-item="dayCourse">
-      <view class='grid {{courseItem ? "grid-" + (courseItem.section_end - courseItem.section_start + 1) : "grid-1"}}' wx:for="{{dayCourse}}" wx:for-item="courseItem">
-        <view class='grid-content {{courseItem ? "lightblue" : "empty"}}'>{{courseItem.section_start}}</view>
+      <view class='grid {{courseItem ? "grid-" + (courseItem.section_end - courseItem.section_start + 1) : "grid-1"}} {{courseItem.section_start == 0 ? "grid-0" : ""}}' wx:for="{{dayCourse}}" wx:for-item="courseItem">
+        <view class='grid-content {{courseItem ? "" : "empty"}}' style="background-color: {{courseItem.color}}">{{courseItem.course}}@{{courseItem.location}}</view>
       </view>
     </view>
-    
-    <!-- <view class="course">
-      <view class="grid">
-        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
-      </view>
-      <view class="grid">
-        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
-      </view>
-      <view class="grid">
-        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
-      </view>
-      <view class="grid">
-        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
-      </view>
-      <view class="grid">
-        <view class="grid-content lightblue">数据库原理@南山四阶梯</view>
-      </view>
-    </view>
-    <view class="course">
-      <view class="grid">
-        <view class="grid-content empty"></view>
-      </view>
-      <view class="grid">
-        <view class="grid-content lightred">概率论与数理统计1@逸夫楼-410</view>
-      </view> -->
-      <!--9.1%为一个格子的高度  -->
-      <!-- <view class="grid" style="height:36.4%;">
-        <view class="grid-content lightred">概率论与数理统计1@逸夫楼-410</view>
-      </view>
-    </view>
-    <view class="course"></view>
-    <view class="course"></view>
-    <view class="course"></view>
-    <view class="course"></view>
-    <view class="course"></view> -->
   </view>
   <!--  底部工具栏  -->
   <view class="foot">

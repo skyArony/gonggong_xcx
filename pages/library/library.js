@@ -86,8 +86,8 @@ Page({
     // 获取图书馆信息并设置到视图层
     common.getLibrary(function (libraryInfo) {
       common.getLibraryRentList(function (libraryInfo) {
-        if (libraryInfo.libararyUser) that.data.libraryData = libraryInfo
-        else if (that.data.oldData) that.data.libraryData = that.data.oldData
+        if (libraryInfo.libraryUser) that.data.libraryData = libraryInfo
+        else if (that.data.oldData.libraryUser) that.data.libraryData = that.data.oldData
         else that.data.libraryData = {}
         that.endCheck("图书馆信息加载完毕")
       })
@@ -103,8 +103,8 @@ Page({
       else bookNum = this.data.libraryData.libraryBook.length
       this.setData({
         bookNum: bookNum, // 借阅的书籍数目
-        debet: this.data.libraryData.libararyUser['debt'], //图书馆欠费
-        validityTime: this.data.libraryData.libararyUser['valid_date_end'], // 图书借阅有效期限
+        debet: this.data.libraryData.libraryUser['debt'], //图书馆欠费
+        validityTime: this.data.libraryData.libraryUser['valid_date_end'], // 图书借阅有效期限
         rentList: this.data.libraryData.libraryBook // 设置借阅图书表
       })
     } else {
@@ -164,7 +164,25 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.getLibraryInfo()
+    var that = this
+    // 没有缓存密码，提示重新登录
+    if (wx.getStorageSync('portalpw')) {
+      this.getLibraryInfo()
+    } else {
+      wx.showModal({
+        title: '',
+        content: '登录过期，请重新登录。',
+        showCancel: false,
+        success: function (res) {
+          if (res.confirm) {
+            // 跳转到重新登录
+            wx.redirectTo({
+              url: '/pages/login/login'
+            })
+          }
+        }
+      })
+    }
   },
 
   /**

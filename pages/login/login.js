@@ -109,6 +109,7 @@ Page({
     } else if (res.data.code == 9) {
       wx.hideNavigationBarLoading()
       app.globalData.sid = e.detail.value.sid
+      wx.setStorageSync('sid', e.detail.value.sid)
       wx.setStorageSync('portalpw', e.detail.value.password)
       app.globalData.portalpw = e.detail.value.password
       // 绑定学号
@@ -116,7 +117,7 @@ Page({
       // 电话或图书馆未绑定
       wx.showModal({
         title: '',
-        content: '电话或图书馆未绑定,请前往绑定',
+        content: '三翼通行证未绑定完整,请前往绑定',
         showCancel: false,
         success: function (res) {
           if (res.confirm) {

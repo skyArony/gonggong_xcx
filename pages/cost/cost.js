@@ -158,8 +158,26 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.getDataDown()
-    this.getDataTop()
+    var that = this
+    // 没有缓存密码，提示重新登录
+    if (wx.getStorageSync('portalpw')) {
+      this.getDataDown()
+      this.getDataTop()
+    } else {
+      wx.showModal({
+        title: '',
+        content: '登录过期，请重新登录。',
+        showCancel: false,
+        success: function (res) {
+          if (res.confirm) {
+            // 跳转到重新登录
+            wx.redirectTo({
+              url: '/pages/login/login'
+            })
+          }
+        }
+      })
+    }
   },
 
   /**

@@ -259,7 +259,7 @@ function getLibrary(cb) {
       success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
-          app.globalData.libraryInfo.libararyUser = res.data.data
+          app.globalData.libraryInfo.libraryUser = res.data.data
           typeof cb == "function" && cb(res.data.data)
         } else {
           typeof cb == "function" && cb(null)
@@ -282,7 +282,7 @@ function getLibrary(cb) {
       success: function (res) {
         app.globalData.isEnd++
         if (res.data.code == 0) {
-          app.globalData.libraryInfo.libararyUser = res.data.data
+          app.globalData.libraryInfo.libraryUser = res.data.data
           typeof cb == "function" && cb(res.data.data)
         } else {
           typeof cb == "function" && cb(null)
@@ -299,29 +299,29 @@ function getLibrary(cb) {
 /* 获取图书馆读者借阅信息 */
 function getLibraryRentList(cb) {
   var libraryInfo = {}
-  var libararyUser = app.globalData.libraryInfo.libararyUser
-  if (libararyUser) {
+  var libraryUser = app.globalData.libraryInfo.libraryUser
+  if (libraryUser) {
     // 欠费处理
-    var debt = libararyUser.debt
+    var debt = libraryUser.debt
     if (debt > 0) {
       debt = -debt
       debt = debt.toFixed(2)
     }
     else debt = "0.00"
-    libararyUser['debt'] = debt
+    libraryUser['debt'] = debt
   } else {
-    libararyUser = null
+    libraryUser = null
   }
   _getLibraryBook(function (libraryBook) {
-    libraryInfo.libararyUser = libararyUser
+    libraryInfo.libraryUser = libraryUser
     libraryInfo.libraryBook = libraryBook
     // 剩余还书天数
     if (libraryBook == null) {
       var bookTimer = "暂无"
     } else {
       var temp = 100
-      for (var x in libararyBook) {
-        if (libararyBook[x]['interval'] < temp) temp = libararyBook[x]['interval']
+      for (var x in libraryBook) {
+        if (libraryBook[x]['interval'] < temp) temp = libraryBook[x]['interval']
       }
       var bookTimer = temp + " 天"
     }
@@ -716,7 +716,6 @@ function getRankInfo(cb) {
 }
 
 
-
 /* -----------------------------for:ecard:start------------------------ */
 /* 获取用户消费信息 */
 function getBilling(add, cb) {
@@ -772,6 +771,7 @@ function getBilling(add, cb) {
           var itemInfo = {}
           itemInfo.data = res.data.data
           itemInfo.month = dateObj.month
+          itemInfo.year = dateObj.year
           itemInfo.recharge = budget.recharge
           itemInfo.expense = budget.expense
           typeof cb == "function" && cb(itemInfo)
@@ -803,7 +803,8 @@ function getCompleteCourse(week, cb) {
       },
       success: function (res) {
         if (res.data.code == 0) {
-          typeof cb == "function" && cb(getWeekCourse(week, res))
+          app.globalData.officalCourse = res
+          typeof cb == "function" && cb(_getWeekCourse(week, res))
         } else {
           typeof cb == "function" && cb(null)
         }
@@ -824,7 +825,8 @@ function getCompleteCourse(week, cb) {
       },
       success: function (res) {
         if (res.data.code == 0) {
-          typeof cb == "function" && cb(getWeekCourse(week, res))
+          app.globalData.officalCourse = res
+          typeof cb == "function" && cb(_getWeekCourse(week, res))
         } else {
           typeof cb == "function" && cb(null)
         }
@@ -837,10 +839,18 @@ function getCompleteCourse(week, cb) {
   }
 }
 
-/* 返回指定周数的课表 */
-function getWeekCourse(week, res) {
+/* 返回指定周的课表 */
+function getSelectCourse (week, res, cb) {
+  typeof cb == "function" && cb(_getWeekCourse(week, res))
+}
+
+/* 处理指定周数的课表 */
+function _getWeekCourse(week, res) {
+  console.log("选择的星期是")
+  console.log(week)
   var officalCourse = res.data.data
-  var userCourse = JSON.parse(app.globalData.userInfo.course)
+  if (app.globalData.userInfo.course) var userCourse = JSON.parse(app.globalData.userInfo.course)
+  else var userCourse = JSON.parse('{}')
   // 将学校课程分到11个课程格子
   var newOfficalCourse = {}
   var x = 7
@@ -892,7 +902,7 @@ function getWeekCourse(week, res) {
       for (var v in userCourse[u]) {
         var end = userCourse[u][v]["section_end"]
         var start = userCourse[u][v]["section_start"]
-        while(start <= end) {
+        while (start <= end) {
           if (newUserCourse[u][start]) {
             var courseArray = []
             courseArray.push(newUserCourse[u][start])
@@ -929,11 +939,38 @@ function getWeekCourse(week, res) {
           combineCourse[a][b] = null
         }
       }
-      
+
     } else {
       combineCourse[a] = newOfficalCourse[a]
     }
     a--
+  }
+  // 课程的颜色处理
+  var colorArray = app.globalData.COURSE_BLOCK.concat() // 这里要用到数组的深拷贝,否则会出问题
+  var pairArray = {} // 颜色课程配对数组
+  for (var r in combineCourse) {
+    for (var q in combineCourse[r]) {
+      if (combineCourse[r][q]) {
+        var courseName = combineCourse[r][q]['course']
+        var weekArray = combineCourse[r][q]['week'].split(',')
+        if (_inArray(weekArray, week)) {
+          if (_inArray2(pairArray, courseName)) {
+            combineCourse[r][q].color = pairArray[courseName]
+          } else {
+            if (colorArray.length > 0) {
+              pairArray[courseName] = colorArray.shift()
+              combineCourse[r][q].color = pairArray[courseName]
+            } else {
+              colorArray = app.globalData.COURSE_BLOCK.concat()
+              pairArray[courseName] = colorArray.shift()
+              combineCourse[r][q].color = pairArray[courseName]
+            }
+          }
+        } else {
+          combineCourse[r][q].color = "#dadada"
+        }
+      }
+    }
   }
   // 每门超过一节课时间的课保留第一个,去掉后面的
   for (var t in combineCourse) {
@@ -941,14 +978,14 @@ function getWeekCourse(week, res) {
       if (combineCourse[t][g]) {
         var z = combineCourse[t][g].section_end - combineCourse[t][g].section_start
         while (z > 0) {
-          combineCourse[t][parseInt(g) + z] = null
+          combineCourse[t][parseInt(g) + z] = { section_start: 0 }
           z--
         }
       }
     }
   }
   // 去除第一个元素,以让0号元素表示第一节课
-  for(var h in combineCourse) {
+  for (var h in combineCourse) {
     combineCourse[h].shift();
   }
   console.log(combineCourse)
@@ -957,6 +994,104 @@ function getWeekCourse(week, res) {
 
 
 /* -----------------------------for:course:end------------------------ */
+
+/* -----------------------------for:me:start------------------------ */
+/* 获取短信提示状态 */
+function getLibraryNoticeStatus(cb) {
+  if (app.globalData.loginType == 1) {
+    wx.request({
+      url: app.globalData.GET_LIBRARY_SMS_NOTICE_STATUS,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        password: app.globalData.portalpw,
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          typeof cb == "function" && cb(res.data)
+        } else {
+          typeof cb == "function" && cb(null)
+        }
+      },
+      fail: function (res) {
+        typeof cb == "function" && cb(null)
+      }
+    })
+  } else if (app.globalData.loginType == 2) {
+    wx.request({
+      url: app.globalData.GET_LIBRARY_SMS_NOTICE_STATUS_OLD,
+      data: {
+        role: app.globalData.app_AU,
+        hash: app.globalData.app_ID,
+        sid: app.globalData.sid,
+        eduPass: app.globalData.portalpw,
+      },
+      success: function (res) {
+        console.log(res)
+        if (res.data.code == 0) {
+          typeof cb == "function" && cb(res.data)
+        } else {
+          typeof cb == "function" && cb(null)
+        }
+      },
+      fail: function (res) {
+        typeof cb == "function" && cb(null)
+      }
+    })
+  }
+}
+
+/* 设置短信提示状态 */
+function setLibraryNoticeStatus(status) {
+  if (app.globalData.loginType == 1) {
+    if (status) {
+      wx.request({
+        url: app.globalData.ENABLE_LIBRARY_SMS_NOTICE,
+        data: {
+          role: app.globalData.app_AU,
+          hash: app.globalData.app_ID,
+          sid: app.globalData.sid,
+          password: app.globalData.portalpw,
+        }
+      })
+    } else {
+      wx.request({
+        url: app.globalData.DISABLE_LIBRARY_SMS_NOTICE,
+        data: {
+          role: app.globalData.app_AU,
+          hash: app.globalData.app_ID,
+          sid: app.globalData.sid,
+          password: app.globalData.portalpw,
+        }
+      })
+    }
+  } else if (app.globalData.loginType == 2) {
+    if (status) {
+      wx.request({
+        url: app.globalData.ENABLE_LIBRARY_SMS_NOTICE_OLD,
+        data: {
+          role: app.globalData.app_AU,
+          hash: app.globalData.app_ID,
+          sid: app.globalData.sid,
+          eduPass: app.globalData.portalpw,
+        }
+      })
+    } else {
+      wx.request({
+        url: app.globalData.DISABLE_LIBRARY_SMS_NOTICE_OLD,
+        data: {
+          role: app.globalData.app_AU,
+          hash: app.globalData.app_ID,
+          sid: app.globalData.sid,
+          eduPass: app.globalData.portalpw,
+        }
+      })
+    }
+  }
+}
+
+/* -----------------------------for:me:end------------------------ */
 
 /* ----------------------------------------tools------------------------------------- */
 
@@ -970,11 +1105,21 @@ function getCurrentWeek() {
   app.globalData.currentWeek = thePastDay >= 0 ? Math.ceil(currentWeek) : Math.floor(currentWeek)
 }
 
-/* 检查数组中是否存在某元素 */
+/* 检查数组中是否存在某元素--无键数组 */
 function _inArray(arrayToSearch, stringToSearch) {
   for (var s = 0; s < arrayToSearch.length; s++) {
     var thisEntry = arrayToSearch[s].toString();
     if (thisEntry == stringToSearch) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* 检查数组中是否存在某元素--有键数组 */
+function _inArray2(arrayToSearch, stringToSearch) {
+  for (var key in arrayToSearch) {
+    if (key == stringToSearch) {
       return true;
     }
   }
@@ -1152,6 +1297,13 @@ function getSuitableCourse(week, courseArray) {
   }
 }
 
+function loginOut() {
+  wx.clearStorage()
+  wx.redirectTo({
+    url: '/pages/login/login'
+  })
+}
+
 
 /* -----------------全局函数------------------ */
 module.exports.getUserInfo = getUserInfo
@@ -1165,11 +1317,15 @@ module.exports.getGradeInfo = getGradeInfo
 module.exports.getRankInfo = getRankInfo
 module.exports.getBilling = getBilling
 module.exports.getCompleteCourse = getCompleteCourse
+module.exports.getSelectCourse = getSelectCourse
+module.exports.getLibraryNoticeStatus = getLibraryNoticeStatus
+module.exports.setLibraryNoticeStatus = setLibraryNoticeStatus
 module.exports.getRankInfo
 
 /* ---------------------tools--------------------- */
 module.exports.getCurrentWeek = getCurrentWeek
 module.exports.getOtherPw = getOtherPw
 module.exports.getOpenId = getOpenId
+module.exports.loginOut = loginOut
 module.exports._inArray
 module.exports._by

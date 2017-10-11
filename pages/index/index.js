@@ -154,8 +154,7 @@ Page({
     // 获取图书馆信息并设置到视图层
     common.getLibrary(function (libraryInfo) {
       common.getLibraryRentList(function (libraryInfo) {
-        console.log(libraryInfo)
-        if (libraryInfo.libararyUser)  that.data.indexData.libraryInfo = libraryInfo
+        if (libraryInfo.libraryUser)  that.data.indexData.libraryInfo = libraryInfo
         else if (that.data.oldData.libraryInfo) that.data.indexData.libraryInfo = that.data.oldData.libraryInfo
         else that.data.indexData.libraryInfo = null
         that.endCheck("图书馆信息加载完毕，")
@@ -207,7 +206,7 @@ Page({
     if (this.data.indexData.libraryInfo)
       this.setData({
         bookTimer: this.data.indexData.libraryInfo.bookTimer,
-        libraryDebt: this.data.indexData.libraryInfo.libararyUser['debt']
+        libraryDebt: this.data.indexData.libraryInfo.libraryUser['debt']
       })
     // 设置e卡通信息
     if (this.data.indexData.eCardInfo)
@@ -290,7 +289,25 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    this.getIndexData()
+    var that = this
+    // 没有缓存密码，提示重新登录
+    if (wx.getStorageSync('portalpw')) {
+      this.getIndexData()
+    } else {
+      wx.showModal({
+        title: '',
+        content: '登录过期，请重新登录。',
+        showCancel: false,
+        success: function (res) {
+          if (res.confirm) {
+            // 跳转到重新登录
+            wx.redirectTo({
+              url: '/pages/login/login'
+            })
+          }
+        }
+      })
+    }
   },
 
   /**

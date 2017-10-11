@@ -42,7 +42,7 @@
         <view class="button-font">消费</view>
       </navigator>
     </view>
-    <view class="buttons-content">
+    <!-- <view class="buttons-content">
       <view class="button" bindtap="waiting">
         <image class="button-img" src="../../images/process.png"></image>
         <view class="button-font">选修课</view>
@@ -59,7 +59,7 @@
         <image class="button-img" src="../../images/siji.png"></image>
         <view class="button-font">四季电台</view>
       </view>
-    </view>
+    </view> -->
     <view class="line"></view>
   </view>
   <view class="course">

@@ -44,7 +44,7 @@ page{
 .headimg-content{
     width: 40px;
     height: 40px;
-    background-color: green;
+    background-color: #e2e2e2;
     border-radius: 50%;
     overflow: hidden;
 }
@@ -74,7 +74,8 @@ page{
 }
 
 .buttons{
-    height: 26%;
+    /* height: 26%; */
+    height: 13%;
     background-color: #fff;
     margin-bottom: 10rpx;
     display: flex;

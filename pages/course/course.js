@@ -22,10 +22,24 @@ Page({
     selectWeek: 0,
   },
 
+  /* 选择星期课表 */
+  selectWeek: function (e) {
+    console.log(e)
+    this.setData({
+      selectWeek: e.detail.value,
+    })
+    this.getSelectCourse(parseInt(this.data.selectWeek) + 1)
+  },
+
   /* 初始化 */
   init: function () {
-    this.data.courseData = wx.getStorageSync('courseData')
+    if (wx.getStorageSync('courseData')) this.data.courseData = wx.getStorageSync('courseData')
     app.globalData.loginType = wx.getStorageSync('loginType')
+    wx.showNavigationBarLoading() // 导航条显示加载
+    this.data.courseData.currentWeek = app.globalData.currentWeek
+    this.setData({
+      selectWeek: this.data.courseData.currentWeek - 1
+    })
     if (this.data.courseData.data && (new Date().getTime() - this.data.courseData.refreshTime) < 7200000 ) {
       this.setCourseData()
     } else {
@@ -45,7 +59,6 @@ Page({
         sat: this.data.courseData.dateInfo.sat,
         sun: this.data.courseData.dateInfo.sun,
         month: this.data.courseData.dateInfo.month,
-        selectWeek: this.data.courseData.currentWeek - 1,
         currentWeek: this.data.courseData.currentWeek,
       })
     }
@@ -54,9 +67,19 @@ Page({
   getCourseData: function () {
     var that = this
     this.data.courseData = {}
-    wx.showNavigationBarLoading() // 导航条显示加载
+    this.data.courseData.currentWeek = app.globalData.currentWeek
     common.getCompleteCourse(app.globalData.currentWeek, function (courseData) {
       if (courseData) that.data.courseData.data = courseData
+      console.log(courseData)
+      that.endCheck("courseData")
+    })
+  },
+
+  getSelectCourse: function (week) {
+    var that = this
+    common.getSelectCourse(week, app.globalData.officalCourse, function (courseData) {
+      if (courseData) that.data.courseData.data = courseData
+      console.log(courseData)
       that.endCheck("courseData")
     })
   },
@@ -66,7 +89,6 @@ Page({
     // 整个页面的加载态在课程信息加载完后结束
     this.data.courseData.refreshTime = new Date().getTime()
     this.data.courseData.dateInfo = this.getDateInfo()
-    this.data.courseData.currentWeek = app.globalData.currentWeek
     console.log(this.data.courseData)
     this.setCourseData()
     wx.setStorageSync(type, this.data.courseData)
@@ -144,7 +166,25 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-
+    var that = this
+    // 没有缓存密码，提示重新登录
+    if (wx.getStorageSync('portalpw')) {
+      this.getCourseData()
+    } else {
+      wx.showModal({
+        title: '',
+        content: '登录过期，请重新登录。',
+        showCancel: false,
+        success: function (res) {
+          if (res.confirm) {
+            // 跳转到重新登录
+            wx.redirectTo({
+              url: '/pages/login/login'
+            })
+          }
+        }
+      })
+    }
   },
 
   /**

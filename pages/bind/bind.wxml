@@ -4,7 +4,9 @@
 <view class="down">
   <form bindsubmit="bindInfo">
     <view class="input">
-      <input name="library" placeholder="图书馆密码（默认学号后6位数字）"  password="true" />
+      <input wx:if="{{loginType == 2}}" name="ecard" placeholder="一卡通密码（默认身份证后6位数字,不算X）" password="true" />
+      <view wx:if="{{loginType == 2}}" class="line"></view>
+      <input name="library" placeholder="图书馆密码（默认学号后6位）"  password="true" />
       <view class="line"></view>
       <input name="phone" placeholder="手机号"/>
     </view>
