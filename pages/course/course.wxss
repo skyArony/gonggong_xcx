@@ -141,6 +141,11 @@ page{
   border-radius: 6rpx;
   height: 100%;
   padding: 6rpx;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .empty{

@@ -19,7 +19,6 @@ App({
     officeCourse: null, // 官方课表数据
     availableTimer: null, // 当前有效的Timer
     currentWeek: null, // 当前周数
-    isEnd: 0, // 数据加载的结束判断，用来检验页面数据是否加载完成
     loginType: 1, // 登录类型：1是信息门户，2是教务系统
     /* 以下用作全局宏定义 */
     START_TIME: "2017/9/4",

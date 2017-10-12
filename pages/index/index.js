@@ -21,6 +21,7 @@ Page({
     status: 0, // 状态：0-数据正在加载，1-未登录，2-已登录，3-今天没有课
     indexData: {}, // 存储此页面的数据
     oldData: {}, // 上一次的数据
+    isEnd: 0, //  页面加载状态
   },
 
   /**
@@ -115,6 +116,13 @@ Page({
 
   /* 检查数据的有效性 */
   checkIndexData: function () {
+    // 优先课表显示判断
+    if (wx.getStorageSync('firstCourse') == "1") {
+      // 跳转到重新登录
+      wx.navigateTo({
+        url: '/pages/course/course'
+      })
+    }
     this.data.indexData = wx.getStorageSync('indexData')
     // 如果距离上次获取数据的时间超过了两个小时则重新获取数据
     if (this.data.indexData && (new Date().getTime() - this.data.indexData.refreshTime) < 7200000) {
@@ -134,7 +142,9 @@ Page({
     app.globalData.loginType = wx.getStorageSync('loginType')
     // 获取拱拱个人信息并设置到视图层
     common.getUserInfo(function (userInfo) {
+      that.data.isEnd++
       common.getTimerInfo(function (userInfo) {
+        that.data.isEnd++
         console.log(userInfo)
         if (userInfo) that.data.indexData.userInfo = userInfo
         else if (that.data.oldData.userInfo) that.data.indexData.userInfo = that.data.oldData.userInfo
@@ -144,6 +154,7 @@ Page({
     })
     // 获取课程信息并设置到视图层
     common.getCourse(function (courseInfo) {
+      that.data.isEnd++
       console.log(courseInfo)
       console.log(that.data.oldData)
       if (courseInfo) that.data.indexData.courseInfo = courseInfo
@@ -153,8 +164,10 @@ Page({
     })
     // 获取图书馆信息并设置到视图层
     common.getLibrary(function (libraryInfo) {
+      that.data.isEnd++
       common.getLibraryRentList(function (libraryInfo) {
-        if (libraryInfo.libraryUser)  that.data.indexData.libraryInfo = libraryInfo
+        that.data.isEnd++
+        if (libraryInfo.libraryUser) that.data.indexData.libraryInfo = libraryInfo
         else if (that.data.oldData.libraryInfo) that.data.indexData.libraryInfo = that.data.oldData.libraryInfo
         else that.data.indexData.libraryInfo = null
         that.endCheck("图书馆信息加载完毕，")
@@ -162,6 +175,7 @@ Page({
     })
     // 获取一卡通信息并设置到视图层
     common.getEcard(function (eCardInfo) {
+      that.data.isEnd++
       console.log(eCardInfo)
       if (eCardInfo) that.data.indexData.eCardInfo = eCardInfo
       else if (that.data.oldData.eCardInfo) that.data.indexData.eCardInfo = that.data.oldData.eCardInfo
@@ -170,6 +184,7 @@ Page({
     })
     // 获取校园余额并设置到视图层
     common.getNetInfo(function (netInfo) {
+      that.data.isEnd++
       console.log(netInfo)
       if (netInfo) that.data.indexData.netInfo = netInfo
       else if (that.data.oldData.netInfo) that.data.indexData.netInfo = that.data.oldData.netInfo
@@ -226,11 +241,11 @@ Page({
     // 本页面加载项：userinfo,timer,course,library*2,campus_net,ecard
     // 整个页面的加载态在课程信息加载完后结束
     console.log(type + "当前加载状态：" + app.globalData.isEnd)
-    if (app.globalData.isEnd == 7) {
+    if (this.data.isEnd == 7) {
       wx.hideNavigationBarLoading()
       this.data.indexData.refreshTime = new Date().getTime()
       wx.setStorageSync('indexData', this.data.indexData)
-      app.globalData.isEnd = 0
+      this.data.isEnd = 0
       this.setIndexData()
     }
   },

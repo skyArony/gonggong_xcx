@@ -15,6 +15,9 @@
         <view class="set-item0">图书到期短信提醒
           <switch bindchange="libraryNotice" checked="{{libraryNoticeStatus == 1}}" color="#5fb0e8" />
         </view>
+        <view class="set-item0">打开应用先进入课表
+          <switch bindchange="firstCourse" checked="{{firstCourse == 1}}" color="#5fb0e8" />
+        </view>
         <!-- <view class="set-item">其他设置</view> -->
       </view>
     </view>
@@ -25,10 +28,9 @@
       <view class="title">其他</view>
       <view class="line-in"></view>
       <view class="content">
-        <view class="set-item">创建快捷方式</view>
-        <navigator class="set-item" url="/pages/about/about">关于拱拱</navigator>
         <view class="set-item" bindtap="reBind">重新绑定三翼通行证</view>
-        <view class="set-item">我的微信帐号</view>
+        <navigator class="set-item" url="/pages/about/about">关于拱拱</navigator>
+        <!-- <view class="set-item">我的微信帐号</view> -->
         <view class="set-item" bindtap="loginOut">退出登录</view>
       </view>
     </view>

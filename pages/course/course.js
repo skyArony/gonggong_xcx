@@ -22,15 +22,6 @@ Page({
     selectWeek: 0,
   },
 
-  /* 选择星期课表 */
-  selectWeek: function (e) {
-    console.log(e)
-    this.setData({
-      selectWeek: e.detail.value,
-    })
-    this.getSelectCourse(parseInt(this.data.selectWeek) + 1)
-  },
-
   /* 初始化 */
   init: function () {
     if (wx.getStorageSync('courseData')) this.data.courseData = wx.getStorageSync('courseData')
@@ -40,7 +31,7 @@ Page({
     this.setData({
       selectWeek: this.data.courseData.currentWeek - 1
     })
-    if (this.data.courseData.data && (new Date().getTime() - this.data.courseData.refreshTime) < 7200000 ) {
+    if (this.data.courseData.data && (new Date().getTime() - this.data.courseData.refreshTime) < 7200000) {    
       this.setCourseData()
     } else {
       this.getCourseData()
@@ -125,6 +116,15 @@ Page({
     dateNeed.setDate(date.getDate() + (7 - week))
     dateInfo.sun = dateNeed.getDate()
     return dateInfo
+  },
+
+  /* 选择星期课表 */
+  selectWeek: function (e) {
+    console.log(e)
+    this.setData({
+      selectWeek: e.detail.value,
+    })
+    this.getSelectCourse(parseInt(this.data.selectWeek) + 1)
   },
 
   /**

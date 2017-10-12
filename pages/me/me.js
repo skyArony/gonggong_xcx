@@ -13,10 +13,17 @@ Page({
     sid: "0000000000", // 学号
     nickName: "粉猪!", //昵称
     libraryNoticeStatus: "1", // 1开启,0关闭
+    firstCourse: "0", // 1开启,0关闭
   },
 
   /* 初始化 */
   init: function () {
+    if (wx.getStorageSync('firstCourse')) {
+      this.setData({
+        firstCourse: wx.getStorageSync('firstCourse')
+      })
+    }
+    else wx.setStorageSync('firstCourse', '0') // 设置优先课表设置为关
     app.globalData.loginType = wx.getStorageSync('loginType')
     // 设置图书短信提醒的状态
     this.getLibraryNoticeStatus()
@@ -55,7 +62,13 @@ Page({
         })
       }
     }) 
-  },  
+  },
+
+  /* 开启\关闭优先课表 */
+  firstCourse: function (e) {
+    if (e.detail.value) wx.setStorageSync('firstCourse', '1')
+    else wx.setStorageSync('firstCourse', '0')
+  },
 
   /* 获取数据 */
   getUserInfo: function () {

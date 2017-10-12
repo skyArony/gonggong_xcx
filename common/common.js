@@ -17,7 +17,6 @@ function getUserInfo(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
           if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
@@ -29,7 +28,6 @@ function getUserInfo(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -43,7 +41,6 @@ function getUserInfo(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
           if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
@@ -72,7 +69,6 @@ function getUserInfo(cb) {
               }
             },
             fail: function (res) {
-              app.globalData.isEnd++
               typeof cb == "function" && cb(null)
             }
           })
@@ -81,7 +77,6 @@ function getUserInfo(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -144,7 +139,6 @@ function _handleTimer(cb) {
       hash: app.globalData.app_ID,
     },
     success: function (res) {
-      app.globalData.isEnd++
       if (res.data.code == 0) {
         typeof cb == "function" && cb(res.data.data)
       } else {
@@ -152,7 +146,6 @@ function _handleTimer(cb) {
       }
     },
     fail: function (res) {
-      app.globalData.isEnd++
       typeof cb == "function" && cb(null)
     }
   })
@@ -170,7 +163,6 @@ function getCourse(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(_getTodayCorse(res))
         } else {
@@ -178,7 +170,6 @@ function getCourse(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -192,7 +183,6 @@ function getCourse(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(_getTodayCorse(res))
         } else {
@@ -200,7 +190,6 @@ function getCourse(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -257,7 +246,6 @@ function getLibrary(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.libraryInfo.libraryUser = res.data.data
           typeof cb == "function" && cb(res.data.data)
@@ -266,7 +254,6 @@ function getLibrary(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -280,7 +267,6 @@ function getLibrary(cb) {
         password: app.globalData.librarypw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.libraryInfo.libraryUser = res.data.data
           typeof cb == "function" && cb(res.data.data)
@@ -289,7 +275,6 @@ function getLibrary(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -343,7 +328,6 @@ function _getLibraryBook(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(res.data.data)
         } else {
@@ -351,7 +335,6 @@ function _getLibraryBook(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -365,7 +348,6 @@ function _getLibraryBook(cb) {
         password: app.globalData.librarypw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           typeof cb == "function" && cb(res.data.data)
         } else {
@@ -373,7 +355,6 @@ function _getLibraryBook(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -392,7 +373,6 @@ function getEcard(cb) {
         password: app.globalData.portalpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.ecardInfo['balance'] = res.data.data
           typeof cb == "function" && cb(app.globalData.ecardInfo)
@@ -401,7 +381,6 @@ function getEcard(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -415,7 +394,6 @@ function getEcard(cb) {
         password: app.globalData.ecardpw
       },
       success: function (res) {
-        app.globalData.isEnd++
         if (res.data.code == 0) {
           app.globalData.ecardInfo['balance'] = res.data.data
           typeof cb == "function" && cb(app.globalData.ecardInfo)
@@ -424,7 +402,6 @@ function getEcard(cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -441,7 +418,6 @@ function getNetInfo(cb) {
   //     sid: app.globalData.sid,
   //   },
   //   success: function (res) {
-  //     app.globalData.isEnd++
   //     if (res.data.code == 0) {
   //       typeof cb == "function" && cb(res.data.data)
   //     }else {
@@ -449,12 +425,10 @@ function getNetInfo(cb) {
   // }
   //   },
   //   fail: function (res) {
-  //     app.globalData.isEnd++
   //     console.log("校园网账户信息 获取失败了！！！！！！！！！！！！！！！！！！！")
   //     typeof cb == "function" && cb(null)
   //   }
   // })
-  app.globalData.isEnd++
   typeof cb == "function" && cb(null)
 }
 
@@ -748,7 +722,6 @@ function getBilling(add, cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -780,7 +753,6 @@ function getBilling(add, cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -810,7 +782,6 @@ function getCompleteCourse(week, cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
@@ -832,7 +803,6 @@ function getCompleteCourse(week, cb) {
         }
       },
       fail: function (res) {
-        app.globalData.isEnd++
         typeof cb == "function" && cb(null)
       }
     })
