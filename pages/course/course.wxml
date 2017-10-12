@@ -71,7 +71,7 @@
     <!--9.1%为一个格子的高度  -->
     <view class="course" wx:for="{{courseData}}" wx:for-item="dayCourse">
       <view class='grid {{courseItem ? "grid-" + (courseItem.section_end - courseItem.section_start + 1) : "grid-1"}} {{courseItem.section_start == 0 ? "grid-0" : ""}}' wx:for="{{dayCourse}}" wx:for-item="courseItem">
-        <view class='box1 grid-content {{courseItem ? "" : "empty"}}' style="background-color: {{courseItem.color}}">{{courseItem.course}}@{{courseItem.location}}</view>
+        <view class='grid-content {{courseItem ? "" : "empty"}}' style="background-color: {{courseItem.color}}">{{courseItem.course}}@{{courseItem.location}}</view>
       </view>
     </view>
   </view>
