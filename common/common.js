@@ -19,8 +19,8 @@ function getUserInfo(cb) {
       success: function (res) {
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
-          if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
-          else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
+          if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.jpg"
+          else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.jpg"
           if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
           typeof cb == "function" && cb(res.data.data)
         } else {
@@ -43,8 +43,8 @@ function getUserInfo(cb) {
       success: function (res) {
         if (res.data.code == 0) {
           app.globalData.userInfo = res.data.data
-          if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
-          else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
+          if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.jpg"
+          else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.jpg"
           if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
           typeof cb == "function" && cb(res.data.data)
         } else if (res.data.code == 5) {
@@ -60,8 +60,8 @@ function getUserInfo(cb) {
             success: function (res) {
               if (res.data.code == 0) {
                 app.globalData.userInfo = res.data.data
-                if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.png"
-                else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.png"
+                if (app.globalData.userInfo.sex == "男" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header.jpg"
+                else if (app.globalData.userInfo.sex == "女" && app.globalData.userInfo.img == "") app.globalData.userInfo.img = "../../images/header2.jpg"
                 if (app.globalData.userInfo.timer == "") app.globalData.userInfo.timer = "[]"
                 typeof cb == "function" && cb(res.data.data)
               } else {
