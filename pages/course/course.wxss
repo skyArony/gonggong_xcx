@@ -141,6 +141,11 @@ page{
   border-radius: 6rpx;
   height: 100%;
   padding: 6rpx;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .empty{
@@ -155,3 +160,50 @@ page{
   background-color: #eb9fa1;
 }
 
+.grid-1 {
+  height:9.1%
+}
+
+.grid-2 {
+  height:18.2%
+}
+
+.grid-3 {
+  height:27.3%
+}
+
+.grid-4 {
+  height:36.4%
+}
+
+.grid-5 {
+  height:45.5%
+}
+
+.grid-6 {
+  height:54.6%
+}
+
+.grid-7 {
+  height:63.7%
+}
+
+.grid-8 {
+  height:72.8%
+}
+
+.grid-9 {
+  height:81.9%
+}
+
+.grid-10 {
+  height:91%
+}
+
+.grid-11 {
+  height:100%
+}
+
+.grid-0 {
+  display: none
+}

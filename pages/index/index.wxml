@@ -42,7 +42,7 @@
         <view class="button-font">消费</view>
       </navigator>
     </view>
-    <view class="buttons-content">
+    <!-- <view class="buttons-content">
       <view class="button" bindtap="waiting">
         <image class="button-img" src="../../images/process.png"></image>
         <view class="button-font">选修课</view>
@@ -59,7 +59,7 @@
         <image class="button-img" src="../../images/siji.png"></image>
         <view class="button-font">四季电台</view>
       </view>
-    </view>
+    </view> -->
     <view class="line"></view>
   </view>
   <view class="course">
@@ -72,52 +72,52 @@
       <!-- 数据正在加载  -->
       <block wx:if="{{status == 0}}">
         <view class="scroll-block">
-            <view class="scroll-view-top course-name">数据正在加载...</view>
-            <view class="scroll-view-mid course-info">
-              <view class="course-teacher">
-                <image src="../../images/teacher.png" class="course-img"></image>
-                <view class="course-font"> 加载中</view>
-              </view>
-              <view class="course-position">
-                <image src="../../images/position.png" class="course-img"></image>
-                <view class="course-font"> 加载中</view>
-              </view>
+          <view class="scroll-view-top course-name">数据正在加载...</view>
+          <view class="scroll-view-mid course-info">
+            <view class="course-teacher">
+              <image src="../../images/teacher.png" class="course-img"></image>
+              <view class="course-font"> 加载中</view>
             </view>
-            <view class="scroll-view-bottom course-time">waiting...</view>
+            <view class="course-position">
+              <image src="../../images/position.png" class="course-img"></image>
+              <view class="course-font"> 加载中</view>
+            </view>
+          </view>
+          <view class="scroll-view-bottom course-time">waiting...</view>
         </view>
       </block>
       <!-- 未登录  -->
       <block wx:elif="{{status == 1}}">
         <view class="scroll-block">
-            <view class="scroll-view-top course-name">登录看看今天的课表</view>
-            <view class="scroll-view-mid course-info">
-              <view class="course-teacher">
-                <image src="../../images/teacher.png" class="course-img"></image>
-                <view class="course-font"> 拱拱</view>
-              </view>
-              <view class="course-position">
-                <image src="../../images/position.png" class="course-img"></image>
-                <view class="course-font"> 你的手机</view>
-              </view>
+          <view class="scroll-view-top course-name">登录看看今天的课表</view>
+          <view class="scroll-view-mid course-info">
+            <view class="course-teacher">
+              <image src="../../images/teacher.png" class="course-img"></image>
+              <view class="course-font"> 拱拱</view>
             </view>
-            <view class="scroll-view-bottom course-time">？？？？</view>
+            <view class="course-position">
+              <image src="../../images/position.png" class="course-img"></image>
+              <view class="course-font"> 你的手机</view>
+            </view>
+          </view>
+          <view class="scroll-view-bottom course-time">？？？？</view>
         </view>
       </block>
       <!-- 今天无课  -->
       <block wx:elif="{{status == 3}}">
         <view class="scroll-block">
-            <view class="scroll-view-top course-name">今天没课诶(´▽`)ﾉ </view>
-            <view class="scroll-view-mid course-info">
-              <view class="course-teacher">
-                <image src="../../images/teacher.png" class="course-img"></image>
-                <view class="course-font"> 小伙伴们</view>
-              </view>
-              <view class="course-position">
-                <image src="../../images/position.png" class="course-img"></image>
-                <view class="course-font"> 到处浪</view>
-              </view>
+          <view class="scroll-view-top course-name">今天没课诶(´▽`)ﾉ </view>
+          <view class="scroll-view-mid course-info">
+            <view class="course-teacher">
+              <image src="../../images/teacher.png" class="course-img"></image>
+              <view class="course-font"> 小伙伴们</view>
             </view>
-            <view class="scroll-view-bottom course-time">一整天啊！</view>
+            <view class="course-position">
+              <image src="../../images/position.png" class="course-img"></image>
+              <view class="course-font"> 到处浪</view>
+            </view>
+          </view>
+          <view class="scroll-view-bottom course-time">一整天啊！</view>
         </view>
       </block>
       <!-- 已登录  -->
@@ -135,7 +135,7 @@
                 <view class="course-font"> {{item.location}}</view>
               </view>
             </view>
-            <view class="scroll-view-bottom course-time">8:00~9:40 / 1-2节</view>
+            <view class="scroll-view-bottom course-time">{{item.start_time}}~{{item.end_time}} / {{item.section_start}}-{{item.section_end}}节</view>
           </view>
         </scroll-view>
       </block>
@@ -173,9 +173,17 @@
       </view>
       <view class="line-in"></view>
       <view class="timer-in">
-        <view wx:for="{{showTimer}}" class="timer-item">
+        <view wx:if="{{showTimer.length > 0}}">
+          <view wx:for="{{showTimer}}" class="timer-item">
             <view class="info-font">{{item.name}}</view>
             <view class="info-font">{{item.remainDay}}天</view>
+          </view>
+        </view>
+        <view wx:else>
+          <view class="timer-item">
+            <view class="info-font">还没有计划哦</view>
+            <view class="info-font">-</view>
+          </view>
         </view>
       </view>
     </view>

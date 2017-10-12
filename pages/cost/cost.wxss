@@ -38,9 +38,23 @@ page{
     letter-spacing: 5rpx;
 }
 
+.bottom-line2{
+    font-size: 30rpx;
+    padding-top: 10rpx;
+    letter-spacing: 5rpx;
+}
+
 .month-record{
   display: flex;
   flex-direction: column;
+}
+
+.loadMore {
+  display: flex;
+  justify-content: center;
+  padding: 30rpx;
+  font-size: 30rpx;
+  color: #525252;
 }
 
 .mrecord-header{
