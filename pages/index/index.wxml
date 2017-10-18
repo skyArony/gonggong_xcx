@@ -70,7 +70,7 @@
       </view>
       <view class="line-in"></view>
       <!-- 数据正在加载  -->
-      <block wx:if="{{status == 0}}">
+      <block wx:if="{{page_status == 4}}">
         <view class="scroll-block">
           <view class="scroll-view-top course-name">数据正在加载...</view>
           <view class="scroll-view-mid course-info">
@@ -87,7 +87,7 @@
         </view>
       </block>
       <!-- 未登录  -->
-      <block wx:elif="{{status == 1}}">
+      <block wx:elif="{{page_status == 0}}">
         <view class="scroll-block">
           <view class="scroll-view-top course-name">登录看看今天的课表</view>
           <view class="scroll-view-mid course-info">
@@ -104,7 +104,7 @@
         </view>
       </block>
       <!-- 今天无课  -->
-      <block wx:elif="{{status == 3}}">
+      <block wx:elif="{{page_status == 3}}">
         <view class="scroll-block">
           <view class="scroll-view-top course-name">今天没课诶(´▽`)ﾉ </view>
           <view class="scroll-view-mid course-info">
@@ -120,8 +120,8 @@
           <view class="scroll-view-bottom course-time">一整天啊！</view>
         </view>
       </block>
-      <!-- 已登录  -->
-      <block wx:elif="{{status == 2}}">
+      <!-- 今天有课  -->
+      <block wx:elif="{{page_status == 2}}">
         <scroll-view class="scroll-infos" scroll-x="true" scroll-into-view="">
           <view wx:for="{{todayCourseDetail}}" class="scroll-block">
             <view class="scroll-view-top course-name">{{item.course}}</view>

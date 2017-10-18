@@ -18,10 +18,11 @@ Page({
     libraryDebt: "N/A", // 图书馆欠费
     net: "N/A", // 校园网余额
     userImg: "../../images/user_none.png", // 用户头像
-    status: 0, // 状态：0-数据正在加载，1-未登录，2-已登录，3-今天没有课
-    indexData: {}, // 存储此页面的数据
+    page_status: "4", // 当前登录状态:0-未登录，1-已登录，2-今天有课，3-今天没有课，4-数据正在加载
     oldData: {}, // 上一次的数据
     isEnd: 0, //  页面加载状态
+    userInfo: {}, // 用户信息,包括倒计时
+    loading: 0, //加载态,为7时表示此页加载完毕,然后归零
   },
 
   /**
@@ -37,84 +38,19 @@ Page({
     })
   },
 
-  /* 初始化 */
+  /* 初始化-数据准备 */
   init: function () {
     var that = this
-    //  获取当前星期数
-    common.getCurrentWeek()
-    // 获取学号
-    app.globalData.sid = wx.getStorageSync('sid')
+    wx.showNavigationBarLoading() // 导航条显示加载-------------------这里
     // 获取图书馆密码和一卡通密码
-    common.getOtherPw(function (librarypw, ecardpw) {
-      // 获取openId和登录状态
-      common.getOpenId(function (openId) {
-        // 获取用户信息
-        that.checkLogin()
-      })
+    app.getOtherPw(function () {
+      console.log("11111下面")
+      // 获取用户信息
+      that.checkIndexData()
     })
   },
 
-  /* 检查登录状态 */
-  checkLogin: function () {
-    var that = this
-    // 用学号进行数据获取
-    if (app.globalData.sid) {
-      // 已有学号，进行数据获取
-      // 检查本地缓存是否存有密码
-      if (wx.getStorageSync('portalpw')) {
-        // password存入全局变量
-        app.globalData.portalpw = wx.getStorageSync('portalpw')
-        // 检查数据有效性并接着进行数据设置
-        that.checkIndexData()
-      } else {
-        // 没有缓存密码，提示重新登录
-        wx.showModal({
-          title: '',
-          content: '登录过期，请重新登录。',
-          showCancel: false,
-          success: function (res) {
-            if (res.confirm) {
-              that.setData({
-                status: 1
-              })
-              // 跳转到重新登录
-              wx.navigateTo({
-                url: '/pages/login/login'
-              })
-            } else if (res.cancel) {
-              that.setData({
-                status: 1
-              })
-              wx.hideNavigationBarLoading()
-            }
-          }
-        })
-      }
-    } else {
-      // 没有绑定学号，提示是否前往绑定
-      wx.showModal({
-        title: '',
-        content: '你没有绑定学号，无法使用所有功能，是否前往绑定？',
-        success: function (res) {
-          if (res.confirm) {
-            that.setData({
-              status: 1
-            })
-            // 跳转到重新登录
-            wx.navigateTo({
-              url: '/pages/login/login'
-            })
-          } else if (res.cancel) {
-            that.setData({
-              status: 1
-            })
-          }
-        }
-      })
-    }
-  },
-
-  /* 检查数据的有效性 */
+  /* 数据检查 */
   checkIndexData: function () {
     // 优先课表显示判断
     if (wx.getStorageSync('firstCourse') == "1") {
@@ -123,131 +59,206 @@ Page({
         url: '/pages/course/course'
       })
     }
-    this.data.indexData = wx.getStorageSync('indexData')
+    this.data.oldData = wx.getStorageSync('oldData')
     // 如果距离上次获取数据的时间超过了两个小时则重新获取数据
-    if (this.data.indexData && (new Date().getTime() - this.data.indexData.refreshTime) < 7200000) {
+    if (this.data.oldData && (new Date().getTime() - this.data.oldData.refreshTime) < 7200000) {
       // 从缓存中取得数据放到全局变量，准备进行数据设置
-      this.setIndexData()
+      this.setIndexData("", "")
     } else {
-      this.getIndexData()
+      wx.startPullDownRefresh() // 开始刷数据
     }
   },
 
-  /* 进行本页所需的数据获取 */
+  /* 数据获取 */
+  /**
+   * 【数据获取】
+   *  存入userInfo到全局
+   */
   getIndexData: function () {
     var that = this
-    this.data.oldData = this.data.indexData
-    this.data.indexData = {}
-    wx.showNavigationBarLoading() // 导航条显示加载
-    app.globalData.loginType = wx.getStorageSync('loginType')
+    if (this.data.oldData == '') this.data.oldData = {}
     // 获取拱拱个人信息并设置到视图层
     common.getUserInfo(function (userInfo) {
-      that.data.isEnd++
-      common.getTimerInfo(function (userInfo) {
-        that.data.isEnd++
-        console.log(userInfo)
-        if (userInfo) that.data.indexData.userInfo = userInfo
-        else if (that.data.oldData.userInfo) that.data.indexData.userInfo = that.data.oldData.userInfo
-        else that.data.indexData.userInfo = null
-        that.endCheck("个人信息加载完毕，")
-      })
+      that.loadingCheck()
+      app.globalData.errCodeTimes = 0
+      if (app.errorCheck("个人信息", userInfo)) {
+        /* 把个人数据设置到页面和全局 */
+        that.setIndexData("userInfo", userInfo.data)
+        common.getTimerInfo(function (userInfo) {
+          that.loadingCheck()
+          if (userInfo) {
+            that.setIndexData("timer", userInfo)
+          } else if (that.data.oldData.userInfo) {
+            that.setIndexData("timer", that.data.oldData.userInfo)
+          }
+        })
+      } else if (that.data.oldData.userInfo) {
+        that.setIndexData("userInfo", that.data.oldData.userInfo)
+      } else {
+        console.log("倒计时:获取失败:无法获取用户个人信息")
+      }
     })
     // 获取课程信息并设置到视图层
     common.getCourse(function (courseInfo) {
-      that.data.isEnd++
-      console.log(courseInfo)
-      console.log(that.data.oldData)
-      if (courseInfo) that.data.indexData.courseInfo = courseInfo
-      else if (that.data.oldData.courseInfo) that.data.indexData.courseInfo = that.data.oldData.courseInfo
-      else that.data.indexData.courseInfo = null
-      that.endCheck("课程信息加载完毕，")
+      that.loadingCheck()
+      app.globalData.errCodeTimes = 0
+      if (app.errorCheck("课表信息", courseInfo)) {
+        that.setIndexData("courseData", courseInfo.data)
+      } else if (that.data.oldData.courseInfo) {
+        that.setIndexData("courseData", that.data.oldData.courseInfo)
+      }
     })
-    // 获取图书馆信息并设置到视图层
-    common.getLibrary(function (libraryInfo) {
-      that.data.isEnd++
-      common.getLibraryRentList(function (libraryInfo) {
-        that.data.isEnd++
-        if (libraryInfo.libraryUser) that.data.indexData.libraryInfo = libraryInfo
-        else if (that.data.oldData.libraryInfo) that.data.indexData.libraryInfo = that.data.oldData.libraryInfo
-        else that.data.indexData.libraryInfo = null
-        that.endCheck("图书馆信息加载完毕，")
-      })
+    // 获取图书馆用户信息并设置到视图层
+    common.getLibraryUser(function (libraryUser) {
+      that.loadingCheck()
+      if (app.errorCheck("图书馆用户信息", libraryUser)) {
+        var debt = libraryUser.data.debt
+        if (debt > 0) {
+          debt = -debt
+          debt = debt.toFixed(2)
+        }
+        else debt = "0.00"
+        libraryUser.data.debt = debt
+        that.setIndexData("libraryUser", libraryUser.data)
+      } else if (that.data.oldData.libraryUser) {
+        that.setIndexData("libraryUser", that.data.oldData.libraryUser)
+      }
+    })
+    // 获取图书馆借阅信息并计算最近一本书的剩余天数并设置到视图层
+    common.getLibraryRentList(function (rentList) {
+      that.loadingCheck()
+      if (app.errorCheck("图书馆借阅信息", rentList)) {
+        if (rentList.data == null) {
+          var bookTimer = "暂无"
+        } else {
+          var temp = libraryBook[0]['interval']
+          for (var x in libraryBook) {
+            if (libraryBook[x]['interval'] < temp) temp = libraryBook[x]['interval']
+          }
+          var bookTimer = temp + " 天"
+        }
+        rentList.data = bookTimer
+        that.setIndexData("rentList", rentList.data)
+      } else if (that.data.oldData.rentList) {
+        that.setIndexData("rentList", that.data.oldData.rentList)
+      }
     })
     // 获取一卡通信息并设置到视图层
     common.getEcard(function (eCardInfo) {
-      that.data.isEnd++
-      console.log(eCardInfo)
-      if (eCardInfo) that.data.indexData.eCardInfo = eCardInfo
-      else if (that.data.oldData.eCardInfo) that.data.indexData.eCardInfo = that.data.oldData.eCardInfo
-      else that.data.indexData.eCardInfo = null
-      that.endCheck("一卡通信息加载完毕，")
+      that.loadingCheck()
+      if (app.errorCheck("一卡通信息", eCardInfo)) {
+        that.setIndexData("eCardInfo", eCardInfo.data)
+      } else if (that.data.oldData.eCardInfo) {
+        that.setIndexData("eCardInfo", that.data.oldData.eCardInfo)
+      }
     })
     // 获取校园余额并设置到视图层
     common.getNetInfo(function (netInfo) {
-      that.data.isEnd++
-      console.log(netInfo)
-      if (netInfo) that.data.indexData.netInfo = netInfo
-      else if (that.data.oldData.netInfo) that.data.indexData.netInfo = that.data.oldData.netInfo
-      else that.data.indexData.netInfo = null
-      that.endCheck("校园网信息加载完毕，")
+      that.loadingCheck()
+      if (app.errorCheck("校园网余额")) {
+        that.setIndexData("netInfo", netInfo.data)
+      } else if (that.data.oldData.netInfo) {
+        that.setIndexData("netInfo", that.data.oldData.netInfo)
+      }
     })
   },
 
-  /* 设置数据到视图层 */
-  setIndexData: function () {
-    // 设置头像等信息
-    console.log("以下是获取到的个人信息")
-    console.log(this.data.indexData)
-    wx.stopPullDownRefresh() // 停止下拉状态
-    app.globalData.userInfo = this.data.indexData.userInfo
-    // if判断可以防止数据为空时的报错，且在数据接口出问题是仍然采用旧数据
-    if (this.data.indexData.userInfo)
-      this.setData({
-        userImg: this.data.indexData.userInfo['img']
-      })
-    // 设置timer
-    if (this.data.indexData.userInfo.showTimer)
-      this.setData({
-        showTimer: this.data.indexData.userInfo.showTimer
-      })
-    // 设置今日课程信息
-    if (this.data.indexData.courseInfo)
-      this.setData({
-        status: this.data.indexData.courseInfo.status,
-        todayCourse: this.data.indexData.courseInfo.todayCourseNum,
-        todayCourseDetail: this.data.indexData.courseInfo.todayCourseDetail
-      })
-    // 设置图书馆信息
-    if (this.data.indexData.libraryInfo)
-      this.setData({
-        bookTimer: this.data.indexData.libraryInfo.bookTimer,
-        libraryDebt: this.data.indexData.libraryInfo.libraryUser['debt']
-      })
-    // 设置e卡通信息
-    if (this.data.indexData.eCardInfo)
-      this.setData({
-        balance: this.data.indexData.eCardInfo.balance.balance,
-        unclaimed: this.data.indexData.eCardInfo.balance.unclaimed
-      })
-    // 设置校园卡余额
-    if (this.data.indexData.netInfo)
-      this.setData({
-        net: this.data.indexData.netInfo.balance
-      })
+  /**
+   * 检查页面加载状态
+   */
+  loadingCheck: function () {
+    this.data.loading++
+    if (this.data.loading == 7) {
+      wx.stopPullDownRefresh()
+      wx.hideNavigationBarLoading()
+      this.data.loading = 0
+    }
   },
 
-  /* 数据加载检查 */
-  endCheck: function (type) {
-    // 本页面加载项：userinfo,timer,course,library*2,campus_net,ecard
-    // 整个页面的加载态在课程信息加载完后结束
-    console.log(type + "当前加载状态：" + app.globalData.isEnd)
-    if (this.data.isEnd == 7) {
+  /**
+   * 设置数据到界面，
+   * 传入的参数表示数据类型和数据
+   * 存储userInfo和courseData到全局
+   * @param {*string} type
+   * @param {*obj} data
+   */
+  setIndexData: function (type, data) {
+    if (type == "userInfo") {
+      app.globalData.userInfo = data
+      this.data.oldData.userInfo = data
+      this.setData({
+        userImg: data['img']
+      })
+    } else if (type == "timer") {
+      app.globalData.userInfo = data
+      this.data.oldData.userInfo = data
+      this.setData({
+        showTimer: data.showTimer
+      })
+    } else if (type == "courseData") {
+      app.globalData.courseData = data
+      this.data.oldData.courseData = data
+      this.setData({
+        page_status: data.todayCourse.status,
+        todayCourse: data.todayCourse.todayCourseNum,
+        todayCourseDetail: data.todayCourse.todayCourseDetail
+      })
+    } else if (type == "libraryUser") {
+      this.data.oldData.libraryUser = data
+      this.setData({
+        libraryDebt: data['debt']
+      })
+    } else if (type == "rentList") {
+      this.data.oldData.rentList = data
+      this.setData({
+        bookTimer: data
+      })
+    } else if (type == "eCardInfo") {
+      this.data.oldData.eCardInfo = data
+      this.setData({
+        balance: data.balance,
+        unclaimed: data.unclaimed
+      })
+    } else if (type == "netInfo") {
+      this.data.oldData.netInfo = data
+      this.setData({
+        net: data.balance
+      })
+    } else if (type == "") {
+      if (this.data.oldData.userInfo)
+      this.setData({
+        userImg: this.data.oldData.userInfo['img'],
+        showTimer: this.data.oldData.userInfo.showTimer,
+      })
+      if (this.data.oldData.courseData)
+      this.setData({
+        page_status: this.data.oldData.courseData.todayCourse.status,
+        todayCourse: this.data.oldData.courseData.todayCourse.todayCourseNum,
+        todayCourseDetail: this.data.oldData.courseData.todayCourse.todayCourseDetail,
+      })
+      if (this.data.oldData.libraryUser)
+      this.setData({
+        libraryDebt: this.data.oldData.libraryUser['debt'],
+      })
+      if (this.data.oldData.rentList)
+      this.setData({
+        bookTimer: this.data.oldData.rentList,
+      })
+      if (this.data.oldData.eCardInfo)
+      this.setData({
+        balance: this.data.oldData.eCardInfo.balance,
+        unclaimed: this.data.oldData.eCardInfo.unclaimed,
+      })
+      if (this.data.oldData.netInfo)
+      this.setData({
+        net: this.data.oldData.netInfo.balance
+      })
+      wx.stopPullDownRefresh()
       wx.hideNavigationBarLoading()
-      this.data.indexData.refreshTime = new Date().getTime()
-      wx.setStorageSync('indexData', this.data.indexData)
-      this.data.isEnd = 0
-      this.setIndexData()
     }
+    // 加载态判断
+    this.data.oldData.refreshTime = new Date().getTime()
+    wx.setStorageSync('oldData', this.data.oldData)
   },
 
   /**
@@ -304,24 +315,9 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    var that = this
-    // 没有缓存密码，提示重新登录
-    if (wx.getStorageSync('portalpw')) {
+    wx.showNavigationBarLoading() // 导航条显示加载
+    if (app.loginCheck() == "1") {
       this.getIndexData()
-    } else {
-      wx.showModal({
-        title: '',
-        content: '登录过期，请重新登录。',
-        showCancel: false,
-        success: function (res) {
-          if (res.confirm) {
-            // 跳转到重新登录
-            wx.redirectTo({
-              url: '/pages/login/login'
-            })
-          }
-        }
-      })
     }
   },
 

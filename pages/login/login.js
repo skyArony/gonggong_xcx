@@ -98,7 +98,7 @@ Page({
       app.globalData.sid = e.detail.value.sid
       wx.setStorageSync('sid', e.detail.value.sid)
       wx.setStorageSync('portalpw', e.detail.value.password)
-      app.globalData.portalpw = e.detail.value.portalpw
+      app.globalData.portalpw = e.detail.value.password
       // 绑定学号
       this.bindSid(e.detail.value.sid)
       wx.hideNavigationBarLoading()
