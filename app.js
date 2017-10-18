@@ -67,7 +67,6 @@ App({
    *  存储currentWeek到全局，
    *  返回当前周数。
    */
-  /* 获取当前周数 */
   getCurrentWeek: function () {
     // 现在距离开学的天数
     var thePastDay = (new Date() - new Date(this.globalData.START_TIME)) / 1000 / 60 / 60 / 24
@@ -96,7 +95,10 @@ App({
         that.globalData.librarypw = res.data.libraryPw
         that.globalData.ecardpw = res.data.ecardPw
         console.log("密码设置成功")
-        typeof cb == "function" && cb()
+        typeof cb == "function" && cb(true)
+      },
+      fail: function () {
+        typeof cb == "function" && cb(false)
       }
     })
   },
@@ -138,7 +140,7 @@ App({
     currentWeek: null, // 当前周数
     loginType: 0, // 登录类型：1是信息门户，2是教务系统,0-未登录
     errCodeTimes: 0, // 验证码错误次数
-
+    apiStatus: '{course:"1",library:"1",ecard:"1",net:"1"}',
     /* 以下用作全局宏定义 */
     START_TIME: "2017/9/4", //本学期开始时间
     app_AU: "gonggong-wechat", // api调用账户

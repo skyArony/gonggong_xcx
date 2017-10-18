@@ -2,6 +2,7 @@
 // 获取应用实例
 var app = getApp()
 var common = require('../../common/common.js')
+var c_index = require('../../common/c-index.js')
 
 Page({
 
@@ -43,10 +44,9 @@ Page({
     var that = this
     wx.showNavigationBarLoading() // 导航条显示加载-------------------这里
     // 获取图书馆密码和一卡通密码
-    app.getOtherPw(function () {
-      console.log("11111下面")
-      // 获取用户信息
-      that.checkIndexData()
+    app.getOtherPw(function (status) {
+      if (status) that.checkIndexData() // 获取用户信息
+      else console.log("图书馆密码和一卡通密码获取fail" + ":23333")
     })
   },
 
@@ -78,13 +78,13 @@ Page({
     var that = this
     if (this.data.oldData == '') this.data.oldData = {}
     // 获取拱拱个人信息并设置到视图层
-    common.getUserInfo(function (userInfo) {
+    c_index.getUserInfo(function (userInfo) {
       that.loadingCheck()
       app.globalData.errCodeTimes = 0
       if (app.errorCheck("个人信息", userInfo)) {
         /* 把个人数据设置到页面和全局 */
         that.setIndexData("userInfo", userInfo.data)
-        common.getTimerInfo(function (userInfo) {
+        c_index.getTimerInfo(function (userInfo) {
           that.loadingCheck()
           if (userInfo) {
             that.setIndexData("timer", userInfo)
@@ -99,7 +99,7 @@ Page({
       }
     })
     // 获取课程信息并设置到视图层
-    common.getCourse(function (courseInfo) {
+    c_index.getCourse(function (courseInfo) {
       that.loadingCheck()
       app.globalData.errCodeTimes = 0
       if (app.errorCheck("课表信息", courseInfo)) {
@@ -109,7 +109,7 @@ Page({
       }
     })
     // 获取图书馆用户信息并设置到视图层
-    common.getLibraryUser(function (libraryUser) {
+    c_index.getLibraryUser(function (libraryUser) {
       that.loadingCheck()
       if (app.errorCheck("图书馆用户信息", libraryUser)) {
         var debt = libraryUser.data.debt
@@ -125,7 +125,7 @@ Page({
       }
     })
     // 获取图书馆借阅信息并计算最近一本书的剩余天数并设置到视图层
-    common.getLibraryRentList(function (rentList) {
+    c_index.getLibraryRentList(function (rentList) {
       that.loadingCheck()
       if (app.errorCheck("图书馆借阅信息", rentList)) {
         if (rentList.data == null) {
@@ -144,7 +144,7 @@ Page({
       }
     })
     // 获取一卡通信息并设置到视图层
-    common.getEcard(function (eCardInfo) {
+    c_index.getEcard(function (eCardInfo) {
       that.loadingCheck()
       if (app.errorCheck("一卡通信息", eCardInfo)) {
         that.setIndexData("eCardInfo", eCardInfo.data)
@@ -153,7 +153,7 @@ Page({
       }
     })
     // 获取校园余额并设置到视图层
-    common.getNetInfo(function (netInfo) {
+    c_index.getNetInfo(function (netInfo) {
       that.loadingCheck()
       if (app.errorCheck("校园网余额")) {
         that.setIndexData("netInfo", netInfo.data)
@@ -226,33 +226,33 @@ Page({
       })
     } else if (type == "") {
       if (this.data.oldData.userInfo)
-      this.setData({
-        userImg: this.data.oldData.userInfo['img'],
-        showTimer: this.data.oldData.userInfo.showTimer,
-      })
+        this.setData({
+          userImg: this.data.oldData.userInfo['img'],
+          showTimer: this.data.oldData.userInfo.showTimer,
+        })
       if (this.data.oldData.courseData)
-      this.setData({
-        page_status: this.data.oldData.courseData.todayCourse.status,
-        todayCourse: this.data.oldData.courseData.todayCourse.todayCourseNum,
-        todayCourseDetail: this.data.oldData.courseData.todayCourse.todayCourseDetail,
-      })
+        this.setData({
+          page_status: this.data.oldData.courseData.todayCourse.status,
+          todayCourse: this.data.oldData.courseData.todayCourse.todayCourseNum,
+          todayCourseDetail: this.data.oldData.courseData.todayCourse.todayCourseDetail,
+        })
       if (this.data.oldData.libraryUser)
-      this.setData({
-        libraryDebt: this.data.oldData.libraryUser['debt'],
-      })
+        this.setData({
+          libraryDebt: this.data.oldData.libraryUser['debt'],
+        })
       if (this.data.oldData.rentList)
-      this.setData({
-        bookTimer: this.data.oldData.rentList,
-      })
+        this.setData({
+          bookTimer: this.data.oldData.rentList,
+        })
       if (this.data.oldData.eCardInfo)
-      this.setData({
-        balance: this.data.oldData.eCardInfo.balance,
-        unclaimed: this.data.oldData.eCardInfo.unclaimed,
-      })
+        this.setData({
+          balance: this.data.oldData.eCardInfo.balance,
+          unclaimed: this.data.oldData.eCardInfo.unclaimed,
+        })
       if (this.data.oldData.netInfo)
-      this.setData({
-        net: this.data.oldData.netInfo.balance
-      })
+        this.setData({
+          net: this.data.oldData.netInfo.balance
+        })
       wx.stopPullDownRefresh()
       wx.hideNavigationBarLoading()
     }
