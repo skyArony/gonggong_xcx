@@ -1,6 +1,7 @@
 // course.js
 var app = getApp()
-var common = require('../../common/common.js')
+var c_course = require('./c-course.js')
+var c_index = require('../index/c-index.js')
 
 Page({
 
@@ -9,7 +10,6 @@ Page({
    */
   data: {
     weekList: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周', '第7周', '第8周', '第9周', '第10周', '第11周', '第12周', '第13周', '第14周', '第15周', '第16周', '第17周', '第18周', '第19周', '第20周'],
-    courseData: {}, // 课表数据
     mon: 1,
     tues: 2,
     wed: 3,
@@ -18,111 +18,139 @@ Page({
     sat: 6,
     sun: 7,
     month: 9,
-    currentWeek: 1,
-    selectWeek: 0,
+    currentWeek: 1, // 本星期
+    selectWeek: 0, // 选择的星期
+    oldData: {}, // 上一次的旧数据
+    courseData: {}, // 设置到界面的数据
   },
 
   /* 初始化 */
-  init: function () {
-    if (wx.getStorageSync('courseData')) this.data.courseData = wx.getStorageSync('courseData')
-    app.globalData.loginType = wx.getStorageSync('loginType')
-    wx.showNavigationBarLoading() // 导航条显示加载
-    this.data.courseData.currentWeek = app.globalData.currentWeek
+  init: function (type) {
     this.setData({
-      selectWeek: this.data.courseData.currentWeek - 1
+      selectWeek: app.globalData.currentWeek - 1,
+      currentWeek: app.globalData.currentWeek
     })
-    if (this.data.courseData.data && (new Date().getTime() - this.data.courseData.refreshTime) < 7200000) {    
-      this.setCourseData()
-    } else {
-      this.getCourseData()
+    if (app.loginCheck()) {
+      wx.showNavigationBarLoading() // 导航条显示加载
+      if (type == "refresh") this.getData()
+      else this.checkData()
     }
   },
 
-  setCourseData: function () {
-    if (this.data.courseData.data) {
+  /* 数据检查 */
+  checkData: function () {
+    this.data.oldData = wx.getStorageSync("courseData")
+    if (this.data.oldData && (new Date().getTime() - this.data.oldData.refreshTime) < 604800000) {
+      // 从缓存中取得数据放到全局变量，准备进行数据设置
+      this.setDataTopage("", "")
+    } else {
+      this.getData()
+    }
+  },
+
+  /* 数据获取 */
+  getData: function () {
+    var that = this
+    if (this.data.oldData == '') this.data.oldData = {}
+    if (app.globalData.apiStatus.edu) {
+      c_index.getCourse(function (courseInfo) {
+        app.globalData.errCodeTimes = 0
+        if (app.errorCheck("课表信息", courseInfo)) {
+          that.data.oldData.courseData = courseInfo.data.allCourse
+          c_course.getWeekCourse(app.globalData.currentWeek, courseInfo.data.allCourse, function (courseData) {
+            that.setDataTopage("courseData", courseData)
+          })
+        } else if (that.data.oldData.courseData) {
+          c_course.getWeekCourse(app.globalData.currentWeek, that.data.oldData.courseData, function (courseData) {
+            that.setDataTopage("courseData", courseData)
+          })
+        }
+      })
+    } else if (that.data.oldData.courseData) {
+      c_course.getWeekCourse(app.globalData.currentWeek, that.data.oldData.courseData, function (courseData) {
+        that.setDataTopage("courseData", courseData)
+      })
+      console.log("课程表:获取失败:开关被后台关闭")
+    }
+  },
+
+  /* 设置数据到界面 */
+  setDataTopage: function (type, data) {
+    var that = this
+    if (type == "courseData") {
+      var dateInfo = this.getDateInfo()
       this.setData({
-        courseData: this.data.courseData.data, // 课程信息
-        mon: this.data.courseData.dateInfo.mon,
-        tues: this.data.courseData.dateInfo.tues,
-        wed: this.data.courseData.dateInfo.wed,
-        thur: this.data.courseData.dateInfo.thur,
-        fri: this.data.courseData.dateInfo.fri,
-        sat: this.data.courseData.dateInfo.sat,
-        sun: this.data.courseData.dateInfo.sun,
-        month: this.data.courseData.dateInfo.month,
-        currentWeek: this.data.courseData.currentWeek,
+        courseData: data, // 课程信息
+        mon: dateInfo.mon,
+        tues: dateInfo.tues,
+        wed: dateInfo.wed,
+        thur: dateInfo.thur,
+        fri: dateInfo.fri,
+        sat: dateInfo.sat,
+        sun: dateInfo.sun,
+        month: dateInfo.month,
+      })
+    } else {
+      c_course.getWeekCourse(this.data.selectWeek + 1, this.data.oldData.courseData, function (courseData) {
+        that.setDataTopage("courseData", courseData)
       })
     }
-  },
-
-  getCourseData: function () {
-    var that = this
-    this.data.courseData = {}
-    this.data.courseData.currentWeek = app.globalData.currentWeek
-    common.getCompleteCourse(app.globalData.currentWeek, function (courseData) {
-      if (courseData) that.data.courseData.data = courseData
-      console.log(courseData)
-      that.endCheck("courseData")
-    })
+    wx.stopPullDownRefresh()
+    wx.hideNavigationBarLoading()
+    if (type != '') {
+      this.data.oldData.refreshTime = new Date().getTime()
+      wx.setStorageSync('courseData', this.data.oldData)
+    }
   },
 
   getSelectCourse: function (week) {
     var that = this
-    common.getSelectCourse(week, app.globalData.officalCourse, function (courseData) {
-      if (courseData) that.data.courseData.data = courseData
-      console.log(courseData)
-      that.endCheck("courseData")
+    c_course.getWeekCourse(week, that.data.oldData.courseData, function (courseData) {
+      that.setDataTopage("courseData", courseData)
     })
-  },
-
-  /* 数据加载检查 */
-  endCheck: function (type) {
-    // 整个页面的加载态在课程信息加载完后结束
-    this.data.courseData.refreshTime = new Date().getTime()
-    this.data.courseData.dateInfo = this.getDateInfo()
-    console.log(this.data.courseData)
-    this.setCourseData()
-    wx.setStorageSync(type, this.data.courseData)
-    wx.stopPullDownRefresh() // 停止下拉状态
-    wx.hideNavigationBarLoading()
   },
 
   /* 星期和日期获取 */
   getDateInfo: function () {
+    var addDay = (this.data.selectWeek - this.data.currentWeek + 1) * 7
     var dateInfo = {}
     var date = new Date()
-    dateInfo.month = date.getMonth() + 1
+    // 月
+    var dateNeed = new Date()
+    dateNeed.setDate(date.getDate() + addDay)
+    dateInfo.month = dateNeed.getMonth() + 1
+    // 天 
     var week = date.getDay()
     if (week == 0) week = 7
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (1 - week))
+    dateNeed.setDate(date.getDate() + (1 - week) + addDay)
     dateInfo.mon = dateNeed.getDate()
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (2 - week))
+    dateNeed.setDate(date.getDate() + (2 - week) + addDay)
     dateInfo.tues = dateNeed.getDate()
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (3 - week))
+    dateNeed.setDate(date.getDate() + (3 - week) + addDay)
     dateInfo.wed = dateNeed.getDate()
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (4 - week))
+    dateNeed.setDate(date.getDate() + (4 - week) + addDay)
     dateInfo.thur = dateNeed.getDate()
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (5 - week))
+    dateNeed.setDate(date.getDate() + (5 - week) + addDay)
     dateInfo.fri = dateNeed.getDate()
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (6 - week))
+    dateNeed.setDate(date.getDate() + (6 - week) + addDay)
     dateInfo.sat = dateNeed.getDate()
     var dateNeed = new Date()
-    dateNeed.setDate(date.getDate() + (7 - week))
+    dateNeed.setDate(date.getDate() + (7 - week) + addDay)
     dateInfo.sun = dateNeed.getDate()
     return dateInfo
   },
 
   /* 选择星期课表 */
   selectWeek: function (e) {
-    console.log(e)
     this.setData({
       selectWeek: e.detail.value,
+      currentWeek: app.globalData.currentWeek
     })
     this.getSelectCourse(parseInt(this.data.selectWeek) + 1)
   },
@@ -131,7 +159,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.init()
+    this.init('load')
   },
 
   /**
@@ -166,25 +194,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    var that = this
-    // 没有缓存密码，提示重新登录
-    if (wx.getStorageSync('portalpw')) {
-      this.getCourseData()
-    } else {
-      wx.showModal({
-        title: '',
-        content: '登录过期，请重新登录。',
-        showCancel: false,
-        success: function (res) {
-          if (res.confirm) {
-            // 跳转到重新登录
-            wx.redirectTo({
-              url: '/pages/login/login'
-            })
-          }
-        }
-      })
-    }
+    this.init("refresh")
   },
 
   /**

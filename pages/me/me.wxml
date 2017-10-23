@@ -13,10 +13,10 @@
       <view class="line-in"></view>
       <view class="content">
         <view class="set-item0">图书到期短信提醒
-          <switch bindchange="libraryNotice" checked="{{libraryNoticeStatus == 1}}" color="#5fb0e8" />
+          <switch bindchange="setLibraryNotice" checked="{{libraryNoticeStatus == 1}}" color="#5fb0e8" />
         </view>
         <view class="set-item0">打开应用先进入课表
-          <switch bindchange="firstCourse" checked="{{firstCourse == 1}}" color="#5fb0e8" />
+          <switch bindchange="setFirstCourse" checked="{{firstCourse}}" color="#5fb0e8" />
         </view>
         <!-- <view class="set-item">其他设置</view> -->
       </view>

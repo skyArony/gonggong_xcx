@@ -10,7 +10,7 @@
     </view>
     <view class="infos">
       <view class="info">
-        <view class="info-up">{{todayCourse}} 节</view>
+        <view class="info-up">{{todayCourseNum}} 节</view>
         <view class="info-down">今日课程</view>
       </view>
       <view class="info">
@@ -25,19 +25,19 @@
   </view>
   <view class="buttons">
     <view class="buttons-content">
-      <navigator class="button" url="/pages/library/library">
+      <navigator class="button" url="{{(page_status == 0) ? '/pages/login/login' : '/pages/library/library'}}">
         <image class="button-img" src="../../images/books.png"></image>
         <view class="button-font">图书馆</view>
       </navigator>
-      <navigator class="button" url="/pages/course/course">
+      <navigator class="button" url="{{(page_status == 0) ? '/pages/login/login' : '/pages/course/course'}}">
         <image class="button-img" src="../../images/course.png"></image>
         <view class="button-font">课表</view>
       </navigator>
-      <navigator class="button" url="/pages/grade/grade">
+      <navigator class="button" url="{{(page_status == 0) ? '/pages/login/login' : '/pages/grade/grade'}}">
         <image class="button-img" src="../../images/grade.png"></image>
         <view class="button-font">查成绩</view>
       </navigator>
-      <navigator class="button" url="/pages/cost/cost">
+      <navigator class="button" url="{{(page_status == 0) ? '/pages/login/login' : '/pages/cost/cost'}}">
         <image class="button-img" src="../../images/cost.png"></image>
         <view class="button-font">消费</view>
       </navigator>
@@ -167,7 +167,7 @@
   </view>
   <view class="timer">
     <view class="course-in">
-      <view class="todaycourse">
+      <view class="timerTilte">
         <view class="todaycourse-font">倒计时</view>
         <image class="todaycourse-img" src="../../images/more.png"></image>
       </view>

@@ -2,7 +2,7 @@
 <view class="top"></view>
 <image src="../../images/logo.png" mode="aspectFit" id="logo"></image>
 <view class="down">
-  <form bindsubmit="formLogin">
+  <form bindsubmit="login">
     <view class="input">
       <input name="sid" placeholder="请输入学号" />
       <view class="line"></view>

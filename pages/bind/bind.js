@@ -71,11 +71,13 @@ Page({
           hash: app.globalData.app_ID,
           sid: app.globalData.sid,
           eduPass: app.globalData.portalpw,
-          password: e.detail.value.library
+          password: e.detail.value.library,
+          session_id: wx.getStorageSync("session_id")
         },
         success: function (res) {
           if (res.data.code == 0) {
             // 进行一卡通绑定
+            wx.setStorageSync("session_id", res.data.session_id)
             that.bindEcard(e)
           } else {
             wx.hideNavigationBarLoading()
@@ -130,10 +132,12 @@ Page({
           hash: app.globalData.app_ID,
           sid: app.globalData.sid,
           eduPass: app.globalData.portalpw,
-          phone: e.detail.value.phone
+          phone: e.detail.value.phone,
+          session_id: wx.getStorageSync("session_id")
         },
         success: function (res) {
           if (res.data.code == 0) {
+            wx.setStorageSync("session_id", res.data.session_id)
             // 手机号绑定成功
             wx.hideNavigationBarLoading()
             wx.reLaunch({
@@ -163,10 +167,12 @@ Page({
         hash: app.globalData.app_ID,
         sid: app.globalData.sid,
         eduPass: app.globalData.portalpw,
-        password: e.detail.value.ecard
+        password: e.detail.value.ecard,
+        session_id: wx.getStorageSync("session_id")
       },
       success: function (res) {
         if (res.data.code == 0) {
+          wx.setStorageSync("session_id", res.data.session_id)
           // 进行手机号绑定
           that.bindPhone(e)
         } else {

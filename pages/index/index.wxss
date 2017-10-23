@@ -103,7 +103,7 @@ page{
 }
 
 .course{
-    height: 24%;
+    height: 26%;
     background-color: #fff;
     margin-bottom: 10rpx;
     display: flex;
@@ -114,10 +114,10 @@ page{
     background-color: #fff;
     display: flex;
     flex-direction: column;
-    padding: 16rpx 20rpx 0 20rpx;
+    padding:16rpx 20rpx 16rpx 20rpx;    
 }
 .todaycourse{
-    height: auto;
+    /* height: 16%; */
     justify-content: space-between; 
     align-items: center;   
     display: flex;
@@ -141,22 +141,32 @@ page{
 .scroll-block{
     display: inline-block;
     flex-direction: column;
+    /* align-items: stretch; */
+    height: 67%;
     padding: 10rpx;
-    margin: 15rpx 15rpx 0 10rpx;
+    margin: 12rpx 15rpx 0 10rpx;
     overflow: hidden;
     width: 350rpx;
 }
 .course-name{
     font-size: 38rpx;
     color: #525252;
-    padding-bottom: 20rpx;
+    height: 25%;
+    padding-bottom:5%;
 }
 .course-info{
     display: flex;
     align-items: center;
     color: #525252;
-    padding-bottom: 20rpx;
+    height: 27%;
+    padding-bottom:4%;
 }
+
+.course-time{
+    color: #525252;
+    font-size: 28rpx;
+}
+
 .course-teacher{
     display: flex;
     align-items: center;
@@ -173,16 +183,9 @@ page{
 .course-font{
     font-size: 22rpx;
 }
-.course-position{
-
-}
-.course-time{
-    color: #525252;
-    font-size: 28rpx;
-}
 
 .account{
-    height: auto;
+    height: 26%;
     background-color: #fff;
     margin-bottom: 10rpx;
     display: flex;
@@ -220,7 +223,7 @@ page{
     color: #757575;
 }
 .timer{
-    height: auto;
+    height: 15%;
     background-color: #fff;
     margin-bottom: 10rpx;
     display: flex;
@@ -233,4 +236,11 @@ page{
     display:flex;
     justify-content:space-between;
     padding-top:20rpx;
+}
+
+.timerTilte {
+    justify-content: space-between; 
+    align-items: center;   
+    display: flex;
+    padding: 0rpx 20rpx 16rpx 20rpx; 
 }

@@ -40,7 +40,8 @@ function getUserInfo(cb) {
         role: app.globalData.app_AU,
         hash: app.globalData.app_ID,
         sid: app.globalData.sid,
-        password: app.globalData.portalpw
+        password: app.globalData.portalpw,
+        session_id: wx.getStorageSync("session_id")
       },
       success: function (res) {
         if (res.data.code == 5 && app.globalData.errCodeTimes < 10) {
@@ -209,7 +210,7 @@ function __dealCorse(data) {
   for (var tCourse in courseInfo[week]) {
     for (var course in courseInfo[week][tCourse]) {
       var weekArray = courseInfo[week][tCourse][course]['week'].split(',')
-      if (_inArray(weekArray, app.globalData.currentWeek)) {
+      if (__inArray(weekArray, app.globalData.currentWeek)) {
         todayCourseNum++
         if (month == 5 || month == 6 || month == 7 || month == 8 || month == 9) {
           courseInfo[week][tCourse][course]['start_time'] = summer_start[courseInfo[week][tCourse][course]['section_start'] - 1]
@@ -270,7 +271,6 @@ function getLibraryUser(cb) {
 
 /* 获取图书馆借阅信息 */
 function getLibraryRentList(cb) {
-  console.log("准备获取图书信息")
   if (app.globalData.loginType == 1) {
     wx.request({
       url: app.globalData.LIBRARY_RENT_LIST,
@@ -298,51 +298,6 @@ function getLibraryRentList(cb) {
       },
       success: function (res) {
         typeof cb == "function" && cb(res.data)
-      },
-      fail: function (res) {
-        typeof cb == "function" && cb(null)
-      }
-    })
-  }
-}
-
-/* 图书借阅信息获取及处理，服务于getLibraryRentList，不向外暴露接口 */
-function _getLibraryBook(cb) {
-  if (app.globalData.loginType == 1) {
-    wx.request({
-      url: app.globalData.LIBRARY_RENT_LIST,
-      data: {
-        role: app.globalData.app_AU,
-        hash: app.globalData.app_ID,
-        sid: app.globalData.sid,
-        password: app.globalData.portalpw
-      },
-      success: function (res) {
-        if (res.data.code == 0) {
-          typeof cb == "function" && cb(res.data.data)
-        } else {
-          typeof cb == "function" && cb(null)
-        }
-      },
-      fail: function (res) {
-        typeof cb == "function" && cb(null)
-      }
-    })
-  } else if (app.globalData.loginType == 2) {
-    wx.request({
-      url: app.globalData.LIBRARY_RENT_LIST_OLD,
-      data: {
-        role: app.globalData.app_AU,
-        hash: app.globalData.app_ID,
-        sid: app.globalData.sid,
-        password: app.globalData.librarypw
-      },
-      success: function (res) {
-        if (res.data.code == 0) {
-          typeof cb == "function" && cb(res.data.data)
-        } else {
-          typeof cb == "function" && cb(null)
-        }
       },
       fail: function (res) {
         typeof cb == "function" && cb(null)
@@ -366,6 +321,9 @@ function getEcard(cb) {
         if (res.data.code == 5 && app.globalData.errCodeTimes < 10) {
           app.globalData.errCodeTimes++
           getEcard(cb)
+        } else if (res.data.code == 1 && app.globalData.errCodeTimes < 10) {
+          app.globalData.errCodeTimes++
+          getEcard(cb)
         } else {
           typeof cb == "function" && cb(res.data)
         }
@@ -385,6 +343,9 @@ function getEcard(cb) {
       },
       success: function (res) {
         if (res.data.code == 5 && app.globalData.errCodeTimes < 10) {
+          app.globalData.errCodeTimes++
+          getEcard(cb)
+        } else if (res.data.code == 1 && app.globalData.errCodeTimes < 10) {
           app.globalData.errCodeTimes++
           getEcard(cb)
         } else {
@@ -416,6 +377,46 @@ function getNetInfo(cb) {
   })
 }
 
+/* 检查数组中是否存在某元素--无键数组 */
+function __inArray(arrayToSearch, stringToSearch) {
+  for (var s = 0; s < arrayToSearch.length; s++) {
+    var thisEntry = arrayToSearch[s].toString();
+    if (thisEntry == stringToSearch) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* 检查数组中是否存在某元素--有键数组 */
+function __inArray2(arrayToSearch, stringToSearch) {
+  for (var key in arrayToSearch) {
+    if (key == stringToSearch) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* 数组按元素进行排序_第一个参数相同时可按第二个参数排序 */
+function __by(name, minor) {
+  return function (o, p) {
+    var a, b;
+    if (o && p && typeof o === 'object' && typeof p === 'object') {
+      a = o[name];
+      b = p[name];
+      if (a === b) {
+        return typeof minor === 'function' ? minor(o, p) : 0;
+      }
+      if (typeof a === typeof b) {
+        return a < b ? -1 : 1;
+      }
+      return typeof a < typeof b ? -1 : 1;
+    } else {
+      thro("error");
+    }
+  }
+}
 
 module.exports.getUserInfo = getUserInfo
 module.exports.getTimerInfo = getTimerInfo

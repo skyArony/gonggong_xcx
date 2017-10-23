@@ -27,7 +27,7 @@
       <view wx:if="{{rentList}}">
         <view class="content">
           <view class="line"></view>
-          <view  class="item" wx:for="{{rentList}}">
+          <view class="item" wx:for="{{rentList}}">
             <view class="book">{{item.name}}</view>
             <view class="time">到期时间：{{item.deadline}} 还剩:{{item.interval}}天</view>
           </view>
@@ -41,28 +41,45 @@
       </view>
     </view>
   </swiper-item>
-  <swiper-item>
-    <scroll-view scroll-y="true">
-      <view class="query">
-        <form bindsubmit="searchBook">
-          <view class="searchForm">
-            <view class="input">
-              <input name="keyword" placeholder="请输入要检索的关键字" placeholder-class="input-palceholder" confirm-type="search" />
-            </view>
-            <view class="button">
-              <button type="primary" formType="submit">查询</button>
-            </view>
+  <swiper-item class="swiper-search">
+    <view class="query">
+      <form bindsubmit="searchBook">
+        <view class="searchForm">
+          <view class="input">
+            <input name="keyword" placeholder="请输入要检索的关键字" placeholder-class="input-palceholder" confirm-type="search" />
           </view>
-        </form>
-      </view>
-      <view class="result" wx:if="{{searchRes}}">
-        <view wx:for="{{searchRes}}">
-          <view class="res-item" data-url="{{item.url}}" bindtap=" getBookDetail ">
+          <view class="button">
+            <button class="search" type="primary" formType="submit" disabled="{{searchIng}}">{{buttonText}}</button>
+          </view>
+        </view>
+      </form>
+    </view>
+    <scroll-view class="result" scroll-y="true">
+      <view wx:if="{{searchRes}}">
+        <view wx:for="{{searchRes}}" data-url="{{item.url}}" data-index="{{index}}" bindtap="getDetail">
+          <view class="res-item" bindtap=" getBookDetail ">
             <view class="item-title ">{{item.name}}</view>
             <view class="item-info ">
               <view class="author " wx:if="{{item.author}} ">作者：{{item.author}}</view>
               <view class="author " wx:else>作者：-</view>
               <view class="publisher ">{{item.publisher}}</view>
+            </view>
+            <view class="getDetail" wx:if="{{item.detail == 'ing'}}">获取详情中...</view>
+            <view class="detail-res" wx:elif="{{item.detail}}">
+              <view class="detail-header">
+                <view>索书号\位置</view>
+                <view>　　　状态</view>
+                <view>应还日期</view>
+              </view>
+              <view class="detail-line"></view>
+              <view class="list" wx:for="{{item.detail}}" wx:for-item="itemName">
+                <view class="list-position">
+                  <view class="book-id">{{itemName['callNumbers']}}</view>
+                  <view class="book-position">{{itemName['location']}}</view>
+                </view>
+                <view class="verticalCenter">{{itemName['status']}}</view>
+                <view class="verticalCenter">{{itemName['endTime']}}</view>
+              </view>
             </view>
           </view>
         </view>
