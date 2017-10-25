@@ -78,7 +78,8 @@ Page({
       wx.setStorageSync('sid', e.detail.value.sid)
       wx.setStorageSync('portalpw', e.detail.value.password)
       // 绑定学号
-      this.bindSid(e.detail.value.sid)
+      if (e.detail.value.loginType == 1) this.bindSid(loginData.data.name, e.detail.value.sid, e.detail.value.password, '', loginData.data.college, loginData.data.class)
+      if (e.detail.value.loginType == 2) this.bindSid(loginData.data.name, e.detail.value.sid, '', e.detail.value.password, loginData.data.college, loginData.data.class)
       // 跳转到主页
       wx.reLaunch({
         url: '/pages/index/index'
@@ -89,7 +90,8 @@ Page({
       wx.setStorageSync('sid', e.detail.value.sid)
       wx.setStorageSync('portalpw', e.detail.value.password)
       // 绑定学号
-      this.bindSid(e.detail.value.sid)
+      if (e.detail.value.loginType == 1) this.bindSid(loginData.data.name, e.detail.value.sid, e.detail.value.password, '', loginData.data.college, loginData.data.class)
+      if (e.detail.value.loginType == 2) this.bindSid(loginData.data.name, e.detail.value.sid, '', e.detail.value.password, loginData.data.college, loginData.data.class)
       // 电话或图书馆未绑定
       wx.showModal({
         title: '',
@@ -149,13 +151,18 @@ Page({
   },
 
   /* 将学号和openId绑定 */
-  bindSid: function (sid) {
+  bindSid: function (name, sid, eduPass, portalPass, college, eduClass) {
     this.getOpenId(function (openId) {
       // 根据openid获取学号
       wx.request({
         url: app.globalData.BIND_SID,
         data: {
+          name: name,
           sid: sid,
+          eduPass: eduPass,
+          portalPass: portalPass,
+          college: college,
+          eduClass: eduClass,
           g_id: openId
         },
         success: function (res) {
