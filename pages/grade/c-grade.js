@@ -107,6 +107,7 @@ function __getEveryRank(cb, termcode, x, gradeData, creditObj) {
         }
       },
       fail: function (res) {
+        gradeData.counter++
         typeof cb == "function" && cb(null)
       }
     })
@@ -143,6 +144,7 @@ function __getEveryRank(cb, termcode, x, gradeData, creditObj) {
         }
       },
       fail: function (res) {
+        gradeData.counter++
         typeof cb == "function" && cb(null)
       }
     })

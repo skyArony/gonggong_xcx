@@ -146,7 +146,7 @@ page{
     padding: 10rpx;
     margin: 12rpx 15rpx 0 10rpx;
     overflow: hidden;
-    width: 350rpx;
+    /* width: 350rpx; */
 }
 .course-name{
     font-size: 38rpx;

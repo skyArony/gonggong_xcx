@@ -172,11 +172,11 @@ function __getSuitableCourse(week, courseArray) {
     var count = week
     while (count <= 20) {
       count++
-      for (var x in isOk) {
-        var weekArray = isOk[x]['week'].split(',')
+      for (var x in isNo) {
+        var weekArray = isNo[x]['week'].split(',')
         if (__inArray(weekArray, count)) {
           res.status = "0" // 状态0表示从多个过期的课程中选出了最合适的
-          res.course = isOk[x]
+          res.course = isNo[x]
           return res
         }
       }
@@ -184,11 +184,11 @@ function __getSuitableCourse(week, courseArray) {
     var count = week
     while (count >= 1) {
       count--
-      for (var y in isOk) {
-        var weekArray = isOk[y]['week'].split(',')
+      for (var y in isNo) {
+        var weekArray = isNo[y]['week'].split(',')
         if (__inArray(weekArray, count)) {
           res.status = "0" // 状态0表示从多个过期的课程中选出了最合适的
-          res.course = isOk[y]
+          res.course = isNo[y]
           return res
         }
       }

@@ -50,13 +50,17 @@ Page({
         app.globalData.errCodeTimes = 0
         if (app.errorCheck("成绩信息-底部", gradeData)) {
           c_grade.getAllRank(gradeData.data, function (dealData) {
+            that.loadingCheck()
             if (dealData) {
               console.log(dealData)
               that.setDataTopage("downData", dealData)
             }
           })
         } else if (that.data.oldData.downData) {
+          that.loadingCheck()
           that.setDataTopage("downData", that.data.oldData.downData)
+        } else {
+          that.loadingCheck()
         }
       })
       // 获取总学期和绩点
@@ -72,10 +76,12 @@ Page({
     } else if (that.data.oldData.downData && that.data.oldData.topData) {
       that.loadingCheck()
       that.loadingCheck()
+      that.loadingCheck()
       that.setDataTopage("downData", that.data.oldData.downData)
       that.setDataTopage("topData", that.data.oldData.topData)
       console.log("成绩:获取失败:开关被后台关闭")
     } else {
+      that.loadingCheck()
       that.loadingCheck()
       that.loadingCheck()
     }
@@ -127,7 +133,7 @@ Page({
   */
   loadingCheck: function () {
     this.data.loading++
-    if (this.data.loading == 2) {
+    if (this.data.loading == 3) {
       wx.stopPullDownRefresh()
       wx.hideNavigationBarLoading()
       this.data.loading = 0
