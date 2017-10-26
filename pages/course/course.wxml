@@ -14,7 +14,7 @@
     <view class="small" wx:else>本周</view>
   </view>
   <view class="tool">
-    <image class="tool-icon" src="../../images/change.png" mode="aspectFit"></image>
+    <image class="tool-icon" src="../../images/change.png" mode="aspectFit" wx:if="{{0}}"></image>
   </view>
 </view>
 
@@ -77,7 +77,7 @@
   </view>
   <!--  底部工具栏  -->
   <view class="foot">
-    <image src="../../images/pull-down.png" mode="aspectFit"></image>
+    <image src="../../images/pull-down.png" mode="aspectFit" wx:if="{{0}}"></image>
   </view>
 </view>
 

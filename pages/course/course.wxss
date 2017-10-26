@@ -116,7 +116,7 @@ page{
 
 .foot{
   height: 3%;
-  background-color: white;
+  background-color: #f4f4f4;
   overflow: hidden;
   display: flex;
   justify-content: center;

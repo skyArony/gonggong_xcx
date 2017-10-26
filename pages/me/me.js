@@ -1,116 +1,101 @@
 // me.js
 var app = getApp()
-var common = require('../../common/common.js')
+var c_me = require('./c-me.js')
+var c_index = require('../index/c-index.js')
 
+/* 这个页一直会在栈里面,所以其实没有必要对它的数据userInfo进行存储,直接判断是否能
+ * 从index中获得有效数据,不能再进行获取.另外因为图书馆通知开关一般不会经常开关所以可以存一下 */
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    userInfo: {},
     userImg: "../../images/user_none.png", // 用户头像
     sid: "0000000000", // 学号
     nickName: "粉猪!", //昵称
-    libraryNoticeStatus: "1", // 1开启,0关闭
-    firstCourse: "0", // 1开启,0关闭
+    libraryNoticeStatus: true, // 1开启,0关闭
+    firstCourse: false, // 1开启,0关闭
   },
 
   /* 初始化 */
   init: function () {
+    var that = this
+    if (app.loginCheck()) {
+      wx.showNavigationBarLoading() // 导航条显示加载
+      this.setSwitch()
+      // 设置头像等信息
+      if (app.globalData.userInfo) {
+        this.setDataTopage("userInfo", app.globalData.userInfo)
+      } else {
+        c_index.getUserInfo(function (userInfo) {
+          app.globalData.errCodeTimes = 0
+          if (app.errorCheck("个人信息", userInfo)) {
+            /* 把个人数据设置到页面和全局 */
+            that.setDataTopage("userInfo", userInfo.data)
+          }
+        })
+      }
+    }
+  },
+
+  /* 设置数据到视图层 */
+  setDataTopage: function (type, data) {
+    if (type == "libraryNoticeStatus") {
+      this.setData({
+        libraryNoticeStatus: data ? true : false
+      })
+    } else if (type == "userInfo") {
+      this.setData({
+        userImg: data['img'],
+        sid: data['sid'],
+        nickName: data['nickname'],
+      })
+    }
+    wx.stopPullDownRefresh()
+    wx.hideNavigationBarLoading()
+  },
+
+  /* 设置switch开关状态 */
+  setSwitch: function () {
+    var that = this
+    // 设置图书馆短信通知的开关
+    var libraryNotice = wx.getStorageSync("noticeData")
+    if ((new Date().getTime() - libraryNotice.refreshTime) < 604800000)
+      that.setDataTopage("libraryNoticeStatus", libraryNotice.status)
+    else
+      c_me.getLibraryNoticeStatus(function (libraryNotice) {
+        if (app.errorCheck("获取图书馆短信提示状态", libraryNotice)) {
+          that.setDataTopage("libraryNoticeStatus", libraryNotice.status)
+          var noticeData = {}
+          noticeData.status = libraryNotice.status ? true : false
+          noticeData.refreshTime = new Date().getTime()
+          wx.setStorageSync('noticeData', noticeData)
+        }
+      })
+    // 设置优先课表的开关
     if (wx.getStorageSync('firstCourse')) {
       this.setData({
         firstCourse: wx.getStorageSync('firstCourse')
       })
     }
-    else wx.setStorageSync('firstCourse', '0') // 设置优先课表设置为关
-    app.globalData.loginType = wx.getStorageSync('loginType')
-    // 设置图书短信提醒的状态
-    this.getLibraryNoticeStatus()
-    // 设置头像等信息
-    if (wx.getStorageSync('portalpw')) {
-      this.data.userInfo = app.globalData.userInfo
-      console.log("以下是获取到的个人信息")
-      console.log(this.data.userInfo)
-      // if判断可以防止数据为空时的报错，且在数据接口出问题是仍然采用旧数据
-      if (this.data.userInfo)
-        this.setData({
-          userImg: this.data.userInfo['img'],
-          sid: this.data.userInfo['sid'],
-          nickName: this.data.userInfo['nickname'],
-        })
-    } else {
-      // 跳转到重新登录
-      wx.redirectTo({
-        url: '/pages/login/login'
-      })
-    }
+    // else wx.setStorageSync('firstCourse', '0') // 设置优先课表设置为关
   },
 
   /* 开启\关闭图书短信提醒 */
-  libraryNotice: function (e) {
-    common.setLibraryNoticeStatus(e.detail.value) 
-  },
-
-  /* 获取 */
-  getLibraryNoticeStatus: function () {
-    var that = this
-    common.getLibraryNoticeStatus(function (status){
-      if (status) {
-        that.setData({
-          libraryNoticeStatus: status.status
-        })
-      }
-    }) 
+  setLibraryNotice: function (e) {
+    c_me.setLibraryNoticeStatus(e.detail.value)
   },
 
   /* 开启\关闭优先课表 */
-  firstCourse: function (e) {
-    if (e.detail.value) wx.setStorageSync('firstCourse', '1')
-    else wx.setStorageSync('firstCourse', '0')
-  },
-
-  /* 获取数据 */
-  getUserInfo: function () {
-    var that = this
-    wx.showNavigationBarLoading() // 导航条显示加载
-    app.globalData.loginType = wx.getStorageSync('loginType')
-    // 获取拱拱个人信息并设置到视图层
-    common.getUserInfo(function (userInfo) {
-      common.getTimerInfo(function (userInfo) {
-        if (userInfo) that.data.userInfo = userInfo
-        else that.data.userInfo = app.globalData.userInfo
-        that.endCheck("个人信息加载完毕，")
-      })
-    })
-  },
-
-  /* 设置数据到视图层 */
-  setUserInfo: function () {
-    // 设置头像等信息
-    console.log("以下是获取到的个人信息")
-    console.log(this.data.userInfo)
-    wx.stopPullDownRefresh() // 停止下拉状态
-    // if判断可以防止数据为空时的报错，且在数据接口出问题是仍然采用旧数据
-    if (this.data.userInfo)
-      this.setData({
-        userImg: this.data.userInfo['img'],
-        sid: this.data.userInfo['sid'],
-        nickName: this.data.userInfo['nickname'],
-      })
-  },
-
-  /* 数据加载检查 */
-  endCheck: function (type) {
-    console.log(type + "当前加载状态：" + app.globalData.isEnd)
-    wx.hideNavigationBarLoading()
-    app.globalData.isEnd = 0
-    this.setUserInfo()
+  setFirstCourse: function (e) {
+    if (e.detail.value) wx.setStorageSync('firstCourse', true)
+    else wx.setStorageSync('firstCourse', false)
   },
 
   /* 注销 */
   loginOut: function () {
-    common.loginOut()
+    c_me.loginOut()
   },
 
   /* 重新绑定 */
@@ -159,25 +144,7 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    var that = this
-    // 没有缓存密码，提示重新登录
-    if (wx.getStorageSync('portalpw')) {
-      this.getUserInfo()
-    } else {
-      wx.showModal({
-        title: '',
-        content: '登录过期，请重新登录。',
-        showCancel: false,
-        success: function (res) {
-          if (res.confirm) {
-            // 跳转到重新登录
-            wx.redirectTo({
-              url: '/pages/login/login'
-            })
-          }
-        }
-      })
-    }
+    this.init()
   },
 
   /**
