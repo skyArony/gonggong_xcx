@@ -140,8 +140,18 @@ Page({
             wx.setStorageSync("session_id", res.data.session_id)
             // 手机号绑定成功
             wx.hideNavigationBarLoading()
-            wx.reLaunch({
-              url: '/pages/index/index',
+            wx.clearStorage()
+            wx.showModal({
+              title: '',
+              content: '绑定成功，请重新登陆！',
+              showCancel: false,
+              success: function(res) {
+                if (res.confirm) {
+                  wx.reLaunch({
+                    url: '/pages/login/login',
+                  })
+                }
+              }
             })
           } else if (res.data.code == 11){
             wx.hideNavigationBarLoading()
@@ -196,6 +206,7 @@ Page({
     this.setData({
       loginType: app.globalData.loginType
     })
+    wx.setStorageSync('portalpw', null)
   },
 
   /**

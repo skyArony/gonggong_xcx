@@ -89,9 +89,10 @@ Page({
       app.globalData.portalpw = e.detail.value.password
       wx.setStorageSync('sid', e.detail.value.sid)
       wx.setStorageSync('portalpw', e.detail.value.password)
-      // 绑定学号
-      if (e.detail.value.loginType == 1) this.bindSid(loginData.data.name, e.detail.value.sid, e.detail.value.password, '', loginData.data.college, loginData.data.class)
-      if (e.detail.value.loginType == 2) this.bindSid(loginData.data.name, e.detail.value.sid, '', e.detail.value.password, loginData.data.college, loginData.data.class)
+      // // 绑定学号
+      // console.log(loginData)
+      // if (e.detail.value.loginType == 1) this.bindSid(loginData.data.name, e.detail.value.sid, e.detail.value.password, '', loginData.data.college, loginData.data.class)
+      // if (e.detail.value.loginType == 2) this.bindSid(loginData.data.name, e.detail.value.sid, '', e.detail.value.password, loginData.data.college, loginData.data.class)
       // 电话或图书馆未绑定
       wx.showModal({
         title: '',
