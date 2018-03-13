@@ -7,7 +7,7 @@
   <!-- <text class="version">{{versionInfo}}</text> -->
   <text class="developer">拱拱-小程序 的诞生离不开</text>
   <text class="developer">@三翼工作室 @翼工坊\n@三翼开发者中心</text>
-  <button class="button" bindtap="setGroupID">我要反馈</button>
+  <button class="button" bindtap="setGroupID">我要反馈（公测版）</button>
   <text class="link" bindtap="setClipboard">访问官网</text>
   <text class="copyright">Copyright © 2004-2017 湘潭大学三翼工作室</text>
 </view>
